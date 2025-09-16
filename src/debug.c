@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 11:12:18 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/16 11:13:19 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/16 12:57:14 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,5 +15,14 @@
 // print everything in the env list
 void	env_print_debug(t_env *env)
 {
-	return ;
+	t_env	*tmp;
+
+	if (!env)
+		return ;
+	tmp = env;
+	while (tmp)
+	{
+		printf("%s=%s\n", tmp->key, tmp->value);
+		tmp = tmp->next;
+	}
 }

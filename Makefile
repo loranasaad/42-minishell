@@ -1,15 +1,15 @@
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -Iinclude
+CFLAGS = -Iinclude
 
-SRCS = src/main.c src/repl.c src/debug.c src/builtin.c src/env_list.c
+SRCS = src/main.c src/repl.c src/debug.c src/builtin.c src/env_list.c src/utils.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -lreadline -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ -lreadline
 
 clean:
 	rm -f $(OBJS)
