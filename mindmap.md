@@ -1,79 +1,77 @@
 ```mermaid
-graph TD
+flowchart TD
 
-    A[minishell] --> B[main.c]
-    B --> B1["Shell init: env copy, interactive check"]
-    B --> B2["Calls repl()"]
+%% ===================== ENTRY & STATE =====================
+    M["main.c: main(argc, argv, envp)"]
+    IE["env/init_env(envp) → t_env*"]
+    SS["signals/setup_interactive_handlers()"]
+    R["repl.c: repl(t_ms*)"]
 
-    A --> C[repl.c]
-    C --> C1["readline input"]
-    C --> C2["add_history"]
-    C --> C3["Handle Ctrl-D exit"]
+    MS[/"t_ms (env, last_status, interactive)"/]:::data
 
-    A --> D[signals.c]
-    D --> D1["SIGINT: newline + prompt"]
-    D --> D2["SIGQUIT: ignore"]
-    D --> D3["Ctrl-D: exit"]
-    D --> D4["One global int for signals"]
+    M --> IE
+    M --> SS
+    M --> R
+    IE -. updates .-> MS
+    SS -. config .-> MS
 
-    A --> E[lexer.c]
-    E --> E1["Tokenize input"]
-    E1 --> E11[WORD]
-    E1 --> E12[PIPE]
-    E1 --> E13["REDIRECT < > >> <<"]
-    E1 --> E14[QUOTES]
-    E1 --> E15[VARIABLES]
-    E --> E2["Produces token list"]
+%% ===================== REPL LOOP =====================
+    RL["readline(prompt)"]
+    AH["add_history(line)"]
+    EXITD["print \"exit\" and return"]
 
-    A --> F[parser.c]
-    F --> F1["Build AST"]
-    F1 --> F11["ND_CMD: argv + redirs"]
-    F1 --> F12["ND_PIPE: left | right"]
-    F --> F2["Syntax error detection"]
+    LINE[/"line : string"/]:::data
 
-    A --> G[expander.c]
-    G --> G1["Quote removal"]
-    G --> G2["Variable expansion ($VAR, $?)"]
-    G --> G3["Field splitting"]
+    R --> RL
+    RL -->|non-null| LINE
+    RL -->|NULL (Ctrl-D)| EXITD
+    LINE -->|"non-empty"| AH
 
-    A --> H[heredoc.c]
-    H --> H1["<< handling"]
-    H --> H2["Expand if unquoted delimiter"]
-    H --> H3["Ctrl-C cancels heredoc"]
+%% ===================== FRONTEND → CORE =====================
+    LEX["lexer/lex(line) → tokens"]
+    TOK[/"tokens : t_token*"/]:::data
+    PAR["parser/parse(tokens) → AST"]
+    AST[/"AST : t_ast*"/]:::data
+    EXP["expander/expand(AST, t_ms*)"]
+    XAST[/"expanded AST"/]:::data
+    HD["heredoc/prepare(AST, t_ms*)"]
+    PLAN[/"ready to exec (fds prepped)"/]:::data
 
-    A --> I[executor.c]
-    I --> I1["External Command"]
-    I1 --> I11["PATH resolution (path.c)"]
-    I1 --> I12["execve()"]
-    I --> I2[Pipelines]
-    I2 --> I21["pipe creation"]
-    I2 --> I22["fork processes"]
-    I2 --> I23["dup2 redirections"]
-    I --> I3[Redirections]
-    I3 --> I31["open/close files"]
-    I3 --> I32["dup/dup2"]
-    I --> I4["Wait & collect $?"]
+    LINE --> LEX --> TOK --> PAR --> AST --> EXP --> XAST --> HD --> PLAN
 
-    A --> J[builtins.c]
-    J --> J1[echo.c]
-    J --> J2[cd.c]
-    J --> J3[pwd.c]
-    J --> J4[export.c]
-    J --> J5[unset.c]
-    J --> J6[env.c]
-    J --> J7[exit.c]
+%% ===================== EXECUTION =====================
+    EXE["exec/exec_ast(AST, t_ms*)"]
+    PLAN --> EXE
 
-    A --> K[env_utils.c]
-    K --> K1["get/set/unset env vars"]
-    K --> K2[env_to_envp]
-    K --> K3["manage SHLVL, OLDPWD"]
+    F["fork N children / build pipes"]
+    EXE --> F
 
-    A --> L[utils.c]
-    L --> L1["String helpers"]
-    L --> L2["Memory management"]
-    L --> L3["Error handling"]
+    %% Child setup path
+    CSET["child: dup2 pipes + redirs"]
+    F --> CSET
 
-    A --> M[include headers]
-    M --> M1[minishell.h]
-    M --> M2["lexer.h, parser.h, exec.h, builtins.h"]
-    M --> M3["env.h, signals.h, heredoc.h"]
+    DEC{"builtin?"}
+    CSET --> DEC
+
+    BPAR["builtins/run_in_parent(argv, t_ms*)"]
+    BCHILD["builtins/run_in_child(argv, t_ms*)"]
+    PATHR["exec/path_resolve(argv[0], $PATH)"]
+    ENV2["env/env_to_envp(t_env*) → char**"]
+    EXECVE["execve(binary, argv, envp)"]
+
+    %% Builtin decision
+    DEC -->|single cmd (no pipe)| BPAR
+    DEC -->|in pipeline| BCHILD
+    DEC -->|no (external)| PATHR
+
+    %% External flow
+    PATHR --> ENV2 --> EXECVE
+
+    %% Parent wait & status
+    PWAIT["parent: close fds + wait last"]
+    STATUS[/"$? : int (last_status)"/]:::data
+    EXE --> PWAIT --> STATUS
+    STATUS -. updates .-> MS
+
+%% ===================== STYLES =====================
+classDef data fill:#eef9ff,stroke:#0077b6,color:#003049
