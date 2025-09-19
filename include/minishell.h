@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 17:27:13 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/16 14:51:48 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:51:39 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,5 +57,6 @@ size_t	countwords(char const *s, char c);
 void	find_and_allocate_words(char const *s, char c, char **w, size_t w_i);
 char	*allocate_word(char const *s, size_t begin, size_t end);
 void	free_words(char **words, size_t count);
+char	*ft_strjoin(char const *s1, char const *s2);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:49:41 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/16 17:56:25 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/18 22:14:38 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,12 @@ t_env	*env_init(char **envp)
 	{
 		return (NULL); // build minimal env
 	}
+	env = NULL;
 	i = 0;
 	while (envp[i])
 	{
 		key_value =  ft_split(envp[i], '=');
-		if (!key_value) // NULL, no =, several =
+		if (!key_value) // check that length is 2
 			continue ;
 		key = ft_strdup(key_value[0]); // !key
 		value = ft_strdup(key_value[1]); // !value
@@ -114,16 +115,28 @@ int	env_set(t_env **env, char *key, char *value, int overwrite)
 // find the key and remove the node, return 1 if key not found
 int	env_unset(t_env **env, char *key)
 {
-	t_env	*tmp;
+	t_env	*w;
+	t_env	*before;
 
 	if (!key || !env)
 		return (1);
-	tmp = env;
-	while (tmp)
+	before = NULL;
+	w = *env;
+	while (w)
 	{
-		if (tmp->key && strcmp(tmp->key, key) == 0)
-			return (0); // TODO
-		tmp = tmp->next;
+		if (w->key && strcmp(w->key, key) == 0)
+		{
+			if (before)
+				before->next = w->next;
+			else 
+				*env = w->next;
+			free(w->key);
+			free(w->value);
+			free(w);
+			return (0);
+		}
+		before = w;
+		w = w->next;
 	}
 	return (1);
 }
@@ -131,7 +144,47 @@ int	env_unset(t_env **env, char *key)
 // list => array (to be passed to execve) 
 char	**env_to_envp(t_env *env)
 {
-	return (NULL);
+	t_env	*w;
+	int		i;
+	char	**envp;
+	char	*tmp;
+
+	i = 0;
+	w = env;
+	while (w)
+	{
+		i++;
+		w = w->next;
+	}
+	envp = malloc((i + 1) * sizeof(char *));
+	if (!envp)
+		return (NULL);
+	w = env;
+	i = 0;
+	while (w)
+	{
+		tmp = ft_strjoin(w->key, "=");
+		if (!tmp)
+		{
+			envp[i] = NULL;
+			free_str_arr(&envp);
+			return (NULL);
+		}
+		if (w->value)
+			envp[i] = ft_strjoin(tmp, w->value);
+		else
+			envp[i] = ft_strdup(tmp);
+		free(tmp);
+		if (!envp[i])
+		{
+			free_str_arr(&envp);
+			return (NULL);
+		}
+		w = w->next;
+		i++;
+	}
+	envp[i] = NULL;
+	return (envp);
 }
 
 // destroy/free the env list

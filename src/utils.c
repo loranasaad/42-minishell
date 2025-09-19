@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 12:47:55 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/16 14:22:20 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:51:28 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,4 +181,23 @@ int ft_strcmp(const char *s1, const char *s2)
 	while (s1[i] && s2[i] && s1[i] == s2[i])
 		i++;
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}
+
+char	*ft_strjoin(char const *s1, char const *s2)
+{
+	size_t	len;
+	char	*result;
+	char	*dest;
+
+	len = ft_strlen(s1) + ft_strlen(s2) + 1;
+	result = (char *) malloc(len);
+	if (!result)
+		return (NULL);
+	dest = result;
+	while (*s1)
+		*dest++ = *s1++;
+	while (*s2)
+		*dest++ = *s2++;
+	*dest = '\0';
+	return (result);
 }

@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 18:01:42 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/16 16:16:59 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:50:43 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,13 @@ int	main(int argc, char **argv, char **envp)
 	t_env	*env;
 
 	env = env_init(envp);
-	env_set(&env, "poney", "blue", 0);
-	env_set(&env, "cat", "red", 1);
-	env_set(&env, "OLDPWD", "bla", 0);
-	env_set(&env, "PATH", "Ludwigkirchstrasse 2", 1);
-	env_set(&env, NULL, "oups", 1);
-	env_print_debug(env);
+	char **en = env_to_envp(env);
+	int	i = 0;
+	while (en[i])
+	{
+		printf("%s\n", en[i]);
+		i++;
+	}
 	printf("minishell: stub\n");
 	env_free(&env);
 	return (0);
