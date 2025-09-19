@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 12:47:55 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/18 15:51:28 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/19 13:40:22 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,124 +55,6 @@ size_t	ft_strlen(const char *s)
 	return (s - begin);
 }
 
-char	**ft_split(char const *s, char c)
-{
-	char	**strings_array;
-	size_t	nwords;
-	size_t	i;
-
-	i = 0;
-	nwords = countwords(s, c);
-	strings_array = malloc(sizeof(char *) * (nwords + 1));
-	if (!strings_array)
-		return (NULL);
-	find_and_allocate_words(s, c, strings_array, 0);
-	while (i < nwords)
-	{
-		if (!strings_array[i])
-		{
-			free_words(strings_array, nwords);
-			return (NULL);
-		}
-		i++;
-	}
-	strings_array[nwords] = NULL;
-	return (strings_array);
-}
-
-size_t	countwords(char const *s, char c)
-{
-	size_t	nwords;
-	int		inword;
-
-	nwords = 0;
-	inword = 0;
-	while (*s)
-	{
-		if (!inword && *s != c)
-		{
-			nwords++;
-			inword = 1;
-		}
-		else if (inword && *s == c)
-			inword = 0;
-		s++;
-	}
-	return (nwords);
-}
-
-void	find_and_allocate_words(char const *s, char c, char **w, size_t w_i)
-{
-	size_t	wordbegin;
-	size_t	i;
-	size_t	slen;
-	int		inword;
-
-	wordbegin = 0;
-	inword = 0;
-	i = 0;
-	slen = ft_strlen(s);
-	while (i <= slen)
-	{
-		if (!inword && s[i] != c)
-		{
-			wordbegin = i;
-			inword = 1;
-		}
-		else if (inword && (s[i] == c || s[i] == '\0'))
-		{
-			inword = 0;
-			w[w_i] = allocate_word(s, wordbegin, i);
-			w_i++;
-		}
-		i++;
-	}
-}
-
-char	*allocate_word(char const *s, size_t begin, size_t end)
-{
-	char	*word;
-
-	word = malloc(end - begin + 1);
-	if (!word)
-	{
-		return (NULL);
-	}
-	ft_memcpy(word, s + begin, end - begin);
-	word[end - begin] = '\0';
-	return (word);
-}
-
-void	free_words(char **words, size_t count)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < count)
-	{
-		free(words[i]);
-		i++;
-	}
-	free(words);
-}
-
-void	*ft_memcpy(void *dest, const void *src, size_t n)
-{
-	unsigned char		*dest_byte;
-	const unsigned char	*src_byte;
-
-	if (!dest || !src)
-		return (dest);
-	dest_byte = dest;
-	src_byte = src;
-	while (n > 0)
-	{
-		*dest_byte++ = *src_byte++;
-		n--;
-	}
-	return (dest);
-}
-
 int ft_strcmp(const char *s1, const char *s2)
 {
 	int i;
@@ -200,4 +82,141 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		*dest++ = *s2++;
 	*dest = '\0';
 	return (result);
+}
+
+char	*ft_strchr(const char *s, int c)
+{
+	while (*s)
+	{
+		if ((unsigned char) c == *s)
+			return ((char *) s);
+		s++;
+	}
+	if ((unsigned char) c == *s)
+		return ((char *) s);
+	return (NULL);
+}
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	size_t	s_len;
+	char	*substr;
+
+	s_len = ft_strlen(s);
+	if (len == 0 || start >= s_len)
+	{
+		substr = (char *) malloc(1);
+		if (!substr)
+			return (NULL);
+		substr[0] = '\0';
+		return (substr);
+	}
+	if (s_len - start < len)
+		len = s_len - start;
+	substr = (char *) malloc(len + 1);
+	if (!substr)
+		return (NULL);
+	ft_memcpy(substr, &s[start], len);
+	substr[len] = '\0';
+	return (substr);
+}
+
+void	*ft_memcpy(void *dest, const void *src, size_t n)
+{
+	unsigned char		*dest_byte;
+	const unsigned char	*src_byte;
+
+	if (!dest || !src)
+		return (dest);
+	dest_byte = dest;
+	src_byte = src;
+	while (n > 0)
+	{
+		*dest_byte++ = *src_byte++;
+		n--;
+	}
+	return (dest);
+}
+
+int	ft_atoi(const char *str)
+{
+	int	sign;
+	int	n;
+
+	n = 0;
+	sign = 1;
+	while (ft_isspace(*str))
+		str++;
+	if (*str == '+' || *str == '-')
+	{
+		if (*str == '-')
+			sign *= -1;
+		str++;
+	}
+	while (*str >= '0' && *str <= '9')
+	{
+		n = 10 * n + *str - '0';
+		str++;
+	}
+	return (sign * n);
+}
+
+int	ft_isspace(char c)
+{
+	return ((c >= 9 && c <= 13) || c == 32);
+}
+
+char	*ft_itoa(int n)
+{
+	unsigned int	bytes;
+	unsigned int	digits;
+	int				neg;
+	char			*strnum;
+
+	neg = 0;
+	if (n == -2147483648)
+		return (ft_strdup("-2147483648"));
+	digits = ft_how_many_digits(n);
+	neg = ft_handle_neg(&n);
+	bytes = digits + 1 + neg;
+	strnum = (char *) malloc(bytes);
+	if (!strnum)
+		return (NULL);
+	strnum = strnum + bytes - 1;
+	*strnum-- = '\0';
+	while (digits--)
+	{
+		*strnum-- = (n % 10) + '0';
+		n = n / 10;
+	}
+	if (neg)
+		*strnum-- = '-';
+	return (++strnum);
+}
+
+unsigned int	ft_how_many_digits(int n)
+{
+	unsigned int	digits;
+
+	digits = 0;
+	if (n < 0)
+		n = -n;
+	while (1)
+	{
+		digits++;
+		n = n / 10; 
+		if (n == 0)
+			break ;
+	}
+	return (digits);
+}
+
+int	ft_handle_neg(int *n)
+{
+	if (*n < 0)
+	{
+		*n = -*n;
+		return (1);
+	}
+	return (0);
 }

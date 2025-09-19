@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:49:41 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/18 22:14:38 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/19 17:20:16 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,39 +17,61 @@ t_env	*env_init(char **envp)
 {
 	int		i;
 	t_env	*env;
-	char	**key_value;
 	char	*key;
 	char	*value;
 
-	//  !envp shouldnt happen, envp[0] = NULL when env -i ./minishell
+	env = NULL;
 	if (!envp || !envp[0])
 	{
-		return (NULL); // build minimal env
+		build_min_env(&env);
+		return (env);
 	}
-	env = NULL;
 	i = 0;
 	while (envp[i])
-	{
-		key_value =  ft_split(envp[i], '=');
-		if (!key_value) // check that length is 2
-			continue ;
-		key = ft_strdup(key_value[0]); // !key
-		value = ft_strdup(key_value[1]); // !value
-		add_env_var(&env, key, value); // what if that fails ?
-		free_str_arr(&key_value);
+	{	
+		key = get_key(envp[i]);
+		value = ft_strchr(envp[i], '=');
+		if (value)
+			value = ft_strdup(value + 1);
+		else
+			value = ft_strdup("");
+		if (add_env_var(&env, key, value) == 1)
+		{
+			env_free(&env);
+			return (NULL);
+		}
 		i++;
 	}
+	handle_shlvl(&env);
 	return (env);
 }
 
+char	*get_key(char *env_var)
+{
+	size_t	i;
+
+	i = 0;
+	while (env_var[i] && env_var[i] != '=')
+	{
+		i++;
+	}
+	return (ft_substr(env_var, 0, i));
+}
+
+// add an env var to the list, val must never be NULL but "" if nothing
 int	add_env_var(t_env **env, char *key, char* value)
 {
 	t_env	*var;
 	t_env	*tmp;
 	
 	var = malloc(sizeof(t_env));
-	if (!var)
+	if (!var || !key || !value)
+	{
+		free(value);
+		free(key);
+		free(var);
 		return (1);
+	}
 	var->key = key;
 	var->value = value;
 	var->next = NULL;	
@@ -65,6 +87,13 @@ int	add_env_var(t_env **env, char *key, char* value)
 		tmp->next = var;
 	}
 	return (0);
+}
+
+void	build_min_env(t_env **env)
+{
+	env_set(env, "SHLVL", "1", 0);
+	env_set(env, "PWD", getcwd(NULL, 0), 0);
+	env_set(env, "PATH", "/usr/bin:/bin", 0);
 }
 
 // if key found, returns value, else NULL !!! CASE SENSITIVE
@@ -84,6 +113,28 @@ char	*env_get(t_env *env, char *key)
 	return (NULL);
 }
 
+void	handle_shlvl(t_env	**env)
+{
+	char	*shell_lvl;
+	int		shell_lvl_nb;
+
+	shell_lvl = env_get(*env, "SHLVL");
+	if (!shell_lvl)
+	{
+		env_set(env, "SHLVL", "1", 0);
+		return ;
+	}
+	shell_lvl_nb = ft_atoi(shell_lvl);
+	shell_lvl_nb++;
+	if (shell_lvl_nb > 1000 || shell_lvl_nb < 0)
+		shell_lvl_nb = 1;
+	shell_lvl = ft_itoa(shell_lvl_nb);
+	if (!shell_lvl)
+		return ;
+	env_set(env, "SHLVL", shell_lvl, 1);
+	free(shell_lvl);
+}
+
 // Key exists => overwrite or not the value. No key => add new node 
 int	env_set(t_env **env, char *key, char *value, int overwrite)
 {
@@ -91,6 +142,8 @@ int	env_set(t_env **env, char *key, char *value, int overwrite)
 
 	if (!key || !env)
 		return (1);
+	if (!value)
+		value = "";
 	tmp = *env;
 	while (tmp)
 	{
@@ -99,19 +152,17 @@ int	env_set(t_env **env, char *key, char *value, int overwrite)
 			if (overwrite)
 			{
 				free(tmp->value);
-				if (value)
-					tmp->value = ft_strdup(value);
-				else
-					tmp->value = NULL;
-				if (value && !tmp->value)
+				tmp->value = ft_strdup(value);
+				if (!tmp->value)
 					return (1);
 			}
 			return (0);
 		}
 		tmp = tmp->next;
 	}
-	return (add_env_var(env, ft_strdup(key), ft_strdup(value)));
+	return (add_env_var(env, ft_strdup(key), ft_strdup(value))); // memory leaks if add_env_var fails
 }
+
 // find the key and remove the node, return 1 if key not found
 int	env_unset(t_env **env, char *key)
 {
