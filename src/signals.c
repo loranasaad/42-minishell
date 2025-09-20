@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 12:45:27 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/18 13:19:36 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/09/20 13:28:30 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,21 @@ void	sigint_handler(int sig)
 {
 	(void)sig;
 	g_signal = SIGINT;
+	write(STDOUT_FILENO, "\n", 1);
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
+	extern	int	rl_done;
+	rl_done = 1;
 }
 
 void	sigquit_handler(int sig)
 {
 	(void)sig;
+	// printf("debug: quit detected/n");
 	g_signal = SIGQUIT;
+	// rl_on_new_line();
+	// rl_redisplay();
 }
 void	init_prompt_signals(void)
 {
@@ -39,7 +45,7 @@ void	init_prompt_signals(void)
 	sigemptyset(&sa_quit.sa_mask);
 	sa_int.sa_handler = sigint_handler;
 	sa_quit.sa_handler = sigquit_handler;
-	sa_int.sa_flags = SA_RESTART;
+	// sa_int.sa_flags = SA_RESTART;
 	sa_quit.sa_flags = SA_RESTART;
 	sigaction(SIGINT, &sa_int, NULL);
 	sigaction(SIGQUIT, &sa_quit, NULL);

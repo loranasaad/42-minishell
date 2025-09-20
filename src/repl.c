@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 16:20:57 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/18 13:38:48 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/09/20 14:20:24 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@ void	repl(t_ms *ms)
 {
 	char	*line;
 
+	init_prompt_signals();
+	extern int rl_catch_signals;
+    rl_catch_signals = 0;
 	(void)ms;
 	while (1)
 	{
@@ -25,7 +28,16 @@ void	repl(t_ms *ms)
 		if (!line)
 		{
 			printf("exit\n");
+			// termios_restore();
 			break;
+		}
+		if (g_signal == SIGINT)
+		{
+			ms->last_status = 130;
+			g_signal = 0;
+			if (line)
+				free(line);
+			continue;
 		}
 		if (line[0] == '\0')
 		{

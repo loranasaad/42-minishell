@@ -4,7 +4,7 @@ CFLAGS  = -Wall -Wextra -Werror -Iinclude
 LDFLAGS =
 LDLIBS  =
 
-SRCS = src/main.c src/repl.c src/signals.c
+SRCS = src/main.c src/repl.c src/signals.c src/termios_helpers.c
 OBJS = $(SRCS:.c=.o)
 
 # Detect OS to set readline include/lib paths and extra libs
@@ -26,7 +26,7 @@ ifeq ($(UNAME_S),Darwin)
   LDLIBS  += -lreadline
 else
   # Linux
-  LDLIBS  += -lreadline -lncurses
+  LDLIBS  += -lreadline -lhistory -lncurses
   # If your distro uses tinfo instead of ncurses, swap the previous line for:
   # LDLIBS  += -lreadline -ltinfo
 endif
