@@ -216,3 +216,127 @@ H) Minimal milestones (so you can checkpoint)
 
 When you finish steps A–D, run the tests in F and paste a short dump of the tokens for:
 cat  < in.txt |  grep "foo $USER"  >> out.log
+
+
+
+
+
+
+
+WORD READER
+
+Pass A — COUNT (state machine)
+
+Inputs: line, start_i (already confirmed: not space, not |<>)
+
+Scratch:
+	•	i = start_i
+	•	len = 0 (number of chars that will end up in the word, without quotes)
+	•	segments = 0 (how many segments we will copy)
+	•	saw_sq = 0, saw_dq = 0 (to compute the final quoted flag)
+
+Loop while:
+	•	line[i] exists, and
+	•	not is_space(line[i]), and
+	•	not is_meta(line[i]):
+
+Cases:
+	1.	Single quote ' at i
+	•	i++ (skip opening quote)
+	•	Find next '. If none → error (return -1).
+	•	Let j point to the closing '.
+	•	Increase len by j - i (the inside length).
+	•	saw_sq = 1, segments++.
+	•	Set i = j + 1 (past closing quote).
+	2.	Double quote " at i
+	•	i++ (skip opening)
+	•	Find next ". If none → error.
+	•	Let j be closing "; add j - i to len.
+	•	saw_dq = 1, segments++.
+	•	i = j + 1.
+	3.	Normal char (not space/meta/quote)
+	•	Optionally, scan a run of normal chars until the next space/meta/quote, and add that run length to len.
+	•	segments++ for this run.
+	•	Advance i to the first stopping char (don’t consume it).
+
+Stop when you hit space/meta/end. Set *end_i = i.
+Return len (≥0). If any unclosed quote, return -1.
+
+Compute out_quoted (only if needed in Pass A; or compute in read_word after copy):
+	•	If segments == 1 and saw_sq == 1 and saw_dq == 0 → 1
+	•	Else if segments == 1 and saw_dq == 1 and saw_sq == 0 → 2
+	•	Else → 0
+
+Rationale: If the entire word is exactly one quoted segment, mark it as quoted; otherwise it’s mixed/unquoted.
+
+⸻
+
+Allocation step
+	•	If len < 0 → failure (unclosed quotes).
+	•	Allocate dst = malloc(len + 1). If NULL → handle as you usually do.
+	•	Now do Pass B to fill dst.
+
+⸻
+
+Pass B — COPY (mirror of pass A)
+
+Inputs: line, start_i, end_i, dst (size len + 1)
+
+Scratch:
+	•	i = start_i
+	•	k = 0 (write index in dst)
+
+Loop while i < end_i:
+	•	If ' → i++ (skip), copy until next ' into dst[k..], then i++ (skip closing).
+	•	Else if " → i++, copy until next " into dst[k..], i++.
+	•	Else → copy a run of normal chars (until space/meta/quote/end_i), advancing both i and k.
+
+Terminate with dst[k] = '\0'.
+
+This pass should not error: you already validated quotes in Pass A.
+You’re just mirroring the same segmenting logic and copying without the quotes.
+
+⸻
+
+Integrate into lex_line()
+
+In the main scanner:
+	•	Skip spaces. If end → break.
+	•	If operator:
+	•	<< → push TK_HDOC, i += 2
+	•	>> → push TK_APP, i += 2
+	•	<  → push TK_IN,   i += 1
+	•	>  → push TK_OUT,  i += 1
+	•	|  → push TK_PIPE, i += 1
+	•	continue
+	•	Else (WORD):
+	•	Call read_word(line, i, &i_after, &str, &quoted)
+	•	If fail:
+	•	*lex_status = 2; free_tokens(head); return NULL;
+	•	Else:
+	•	tok_push_back(&head, tok_new(TK_WORD, str, quoted));
+	•	i = i_after;
+	•	Loop.
+
+At end: *lex_status = 0; return head;
+
+⸻
+
+Quick sanity tests
+	•	echo hi → WORD “echo”, WORD “hi” (quoted=0)
+	•	cat<in|grep"x y">>out → WORD “cat”, IN, WORD “in”, PIPE, WORD “grep”, WORD “x y”(q=2), APP, WORD “out”
+	•	<<EOF cat → HDOC, WORD “EOF”, WORD “cat”
+	•	echo "unterminated → fail, lex_status=2
+	•	'abc' → WORD “abc” (q=1)
+	•	"abc" → WORD “abc” (q=2)
+	•	a"b c"d → WORD “abcd” (q=0)
+
+⸻
+
+Notes / pitfalls to avoid
+	•	Don’t consume the space/meta that ends the word; leave it for the outer loop to process next.
+	•	Be careful when scanning runs: stop on space, |, <, >, ', " (quotes start a quoted segment).
+	•	In Pass A, if you use ft_strchr to find the closing quote, compute indices carefully.
+	•	Return only one error from lexer: unclosed quotes → status=2.
+
+That’s it — implement this plan and your lexer’s word reading will be fast, clean, and compliant, without realloc.

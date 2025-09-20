@@ -1,46 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lex_utils.c                                        :+:      :+:    :+:   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/20 15:49:31 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/20 18:58:06 by loasaad          ###   ########.fr       */
+/*   Created: 2025/05/13 12:13:29 by loasaad           #+#    #+#             */
+/*   Updated: 2025/09/20 19:03:17 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-
-int	word_len(char *str, int *i)
+size_t	ft_strlen(const char *s)
 {
-	int len;
-	
+	size_t	len;
+
 	len = 0;
-	while (!is_meta(str[*i]) && !is_space(str[*i]))
-	{
-		*i += len++;
-	}
+	while (s[len])
+		len++;
 	return (len);
-}
-int	is_space(char c)
-{
-	if (c == ' ' || c == '\t')
-		return (1);
-	return (0);
-}
-
-int	is_meta(char c)
-{
-	if (c == '|' || c == '<' || c == '>')
-		return (1);
-	return (0);
-}
-
-int	match_2(const char *s, int i, char a, char b)
-{
-	if (s[i] && s[i + 1] && s[i] == a && s[i + 1] == b)
-		return (1);
-	return (0);
 }

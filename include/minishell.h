@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 17:27:13 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/20 16:33:07 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/09/20 18:57:41 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-typedef	enum	e_eok
+typedef	enum	e_tok
 {
 	TK_WORD,
 	TK_PIPE,	// |
@@ -61,6 +61,13 @@ void	init_prompt_signals(void);
 
 t_token	*lex_line(const char *line, int *lex_status);
 
+int		match_2(const char *s, int i, char a, char b);
+int		is_meta(char c);
+int		is_space(char c);
+int		word_len(char *str, int *i);
+
+t_token	*tok_new(t_tok kind, char *val, int quoted);
+void	tok_push_back(t_token **head, t_token *node);
 void	free_tokens(t_token *t);
 
 #endif

@@ -1,46 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lex_utils.c                                        :+:      :+:    :+:   */
+/*   tok_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/20 15:49:31 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/20 18:58:06 by loasaad          ###   ########.fr       */
+/*   Created: 2025/09/20 17:12:15 by loasaad           #+#    #+#             */
+/*   Updated: 2025/09/20 17:19:53 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-
-int	word_len(char *str, int *i)
+t_token *tok_new(t_tok kind, char *val, int quoted)
 {
-	int len;
 	
-	len = 0;
-	while (!is_meta(str[*i]) && !is_space(str[*i]))
-	{
-		*i += len++;
-	}
-	return (len);
-}
-int	is_space(char c)
-{
-	if (c == ' ' || c == '\t')
-		return (1);
-	return (0);
 }
 
-int	is_meta(char c)
+void	tok_push_back(t_token **head, t_token *node)
 {
-	if (c == '|' || c == '<' || c == '>')
-		return (1);
-	return (0);
+	
 }
 
-int	match_2(const char *s, int i, char a, char b)
+void	free_tokens(t_token *t)
 {
-	if (s[i] && s[i + 1] && s[i] == a && s[i + 1] == b)
-		return (1);
-	return (0);
+	
 }

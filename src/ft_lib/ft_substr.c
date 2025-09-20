@@ -1,46 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lex_utils.c                                        :+:      :+:    :+:   */
+/*   ft_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/20 15:49:31 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/20 18:58:06 by loasaad          ###   ########.fr       */
+/*   Created: 2025/05/15 14:14:06 by loasaad           #+#    #+#             */
+/*   Updated: 2025/09/20 19:03:07 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-
-int	word_len(char *str, int *i)
+char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	int len;
-	
-	len = 0;
-	while (!is_meta(str[*i]) && !is_space(str[*i]))
+	size_t	i;
+	size_t	s_len;
+	char	*substr;
+
+	s_len = ft_strlen(s);
+	if (start >= s_len)
+		return (ft_strdup(""));
+	if (len > s_len - start)
+		len = s_len - start;
+	substr = (char *)malloc(len + 1);
+	if (!substr)
+		return (NULL);
+	i = 0;
+	while (i < len)
 	{
-		*i += len++;
+		substr[i] = s[start + i];
+		i++;
 	}
-	return (len);
-}
-int	is_space(char c)
-{
-	if (c == ' ' || c == '\t')
-		return (1);
-	return (0);
-}
-
-int	is_meta(char c)
-{
-	if (c == '|' || c == '<' || c == '>')
-		return (1);
-	return (0);
-}
-
-int	match_2(const char *s, int i, char a, char b)
-{
-	if (s[i] && s[i + 1] && s[i] == a && s[i + 1] == b)
-		return (1);
-	return (0);
+	substr[i] = '\0';
+	return (substr);
 }

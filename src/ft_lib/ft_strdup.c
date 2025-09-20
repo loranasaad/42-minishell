@@ -1,46 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lex_utils.c                                        :+:      :+:    :+:   */
+/*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/20 15:49:31 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/20 18:58:06 by loasaad          ###   ########.fr       */
+/*   Created: 2025/05/14 17:29:33 by loasaad           #+#    #+#             */
+/*   Updated: 2025/09/20 19:02:58 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-
-int	word_len(char *str, int *i)
+char	*ft_strdup(const char *src)
 {
-	int len;
-	
-	len = 0;
-	while (!is_meta(str[*i]) && !is_space(str[*i]))
+	char	*copy;
+	int		strlen;
+	int		i;
+
+	strlen = 0;
+	i = 0;
+	while (src[i])
 	{
-		*i += len++;
+		strlen++;
+		i++;
 	}
-	return (len);
-}
-int	is_space(char c)
-{
-	if (c == ' ' || c == '\t')
-		return (1);
-	return (0);
-}
-
-int	is_meta(char c)
-{
-	if (c == '|' || c == '<' || c == '>')
-		return (1);
-	return (0);
-}
-
-int	match_2(const char *s, int i, char a, char b)
-{
-	if (s[i] && s[i + 1] && s[i] == a && s[i + 1] == b)
-		return (1);
-	return (0);
+	copy = ((char *) malloc(sizeof(char) * (strlen + 1)));
+	if (!copy)
+		return (NULL);
+	i = 0;
+	while (src[i])
+	{
+		copy[i] = src[i];
+		i++;
+	}
+	copy[i] = '\0';
+	return (copy);
 }
