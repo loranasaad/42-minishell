@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 17:27:13 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/20 16:21:55 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/09/20 16:33:07 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,25 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+
+typedef	enum	e_eok
+{
+	TK_WORD,
+	TK_PIPE,	// |
+	TK_IN,		// <
+	TK_OUT,		// >
+	TK_APP,		// >>
+	TK_HDOC,	// <<
+}				t_tok;
+
+typedef struct s_token
+{
+	t_tok			kind;
+	char			*val;
+	int				quoted;
+	struct	s_token	*next;
+}					t_token;
+
 
 typedef struct s_env
 {
@@ -39,5 +58,9 @@ void	init_prompt_signals(void);
 
 //int		termios_disable_echoctl(void);
 //void	termios_restore(void);
+
+t_token	*lex_line(const char *line, int *lex_status);
+
+void	free_tokens(t_token *t);
 
 #endif
