@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 15:42:27 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/20 19:25:22 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/09/20 21:31:05 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,68 @@ static	void	push_meta(int *i, t_token *head, char *line, char c)
 	}
 }
 
-static	void	read_word(int *i, t_token *head, char *line)
+static	int	read_word(int *i, const char *line, int *quoted)
 {
+	int	segments;
+	int	sq_seen;
+	int	dq_seen;
+	int	len;
+	int	j;
 	
-	word_len(line, i);
-	
+	sq_seen = 0;
+	dq_seen = 0;
+	segments = 0;
+	len = 0;
+	while(line[*i] && !is_space(line[*i]) && !is_meta(line[*i]))
+	{
+		if (line[*i] == '\'')
+		{
+			j = *i + 1;
+			while (line[j] && line[j] != '\'')
+				j++;
+			if (line[j] == '\0')
+				return (-1);
+			len += j - (*i + 1);
+			*i = j + 1;
+			sq_seen = 1;
+			segments++;
+			continue ;
+		}
+		else if (line[*i] == '"')
+		{
+			j = *i + 1;
+			while (line[j] && line[j] != '"')
+				j++;
+			if (line[j] == '\0')
+				return (-1);
+			len += j - (*i + 1);
+			*i = j + 1;
+			dq_seen = 1;
+			segments++;
+			continue ;
+		}
+		else
+		{
+			j = *i;
+			while (line[j] && line[j] != '"' && line[j] != '\'' 
+					&& !is_meta(line[j]) && !is_space(line[j]))
+			{
+				j++;
+				len++;
+			}
+			if (j > *i)
+				segments++;
+			*i = j;
+			continue ;
+		}
+	}
+	if (segments == 1 && sq_seen == 1 && dq_seen == 0)
+		*quoted = 1;
+	else if (segments == 1 && sq_seen == 0 && dq_seen == 1)
+		*quoted = 2;
+	else
+		*quoted = 0;
+	return (len);
 }
 
 t_token	*lex_line(const char *line, int *lex_status)
@@ -60,8 +117,8 @@ t_token	*lex_line(const char *line, int *lex_status)
 			push_meta(&i, head, line, line[i]);
 			continue ;
 		}
-		else
-			push_word();
+		// else word
+			
 	}
 	return (&head);
 }
