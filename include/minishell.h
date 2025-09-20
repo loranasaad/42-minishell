@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 17:27:13 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/15 18:08:45 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/09/20 16:21:55 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <readline/readline.h>
 
 typedef struct s_env
 {
@@ -32,5 +31,13 @@ typedef struct s_ms
 	int		interactive;
 }			t_ms;
 
+extern	int	g_signal;
+
+void	repl(t_ms *ms);
+
+void	init_prompt_signals(void);
+
+//int		termios_disable_echoctl(void);
+//void	termios_restore(void);
 
 #endif

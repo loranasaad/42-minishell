@@ -1,27 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/15 18:01:42 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/18 16:03:21 by loasaad          ###   ########.fr       */
+/*   Created: 2025/09/20 14:07:01 by loasaad           #+#    #+#             */
+/*   Updated: 2025/09/20 14:07:02 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
-int	main(int argc, char **argv, char **envp)
-{
-	t_ms	ms;
-	
-	(void)argc;
-	(void)argv;
-	(void)envp;
-	ms.last_status = 0;
-	ms.interactive = isatty(STDIN_FILENO);
-	// termios_disable_echoctl();
-	repl(&ms);
-	return ms.last_status;
-}
