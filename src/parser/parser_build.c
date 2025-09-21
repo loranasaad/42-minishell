@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 16:37:02 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/21 18:05:53 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/21 18:39:03 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,16 @@ static int	next_segment(t_token **it, t_token **out_start, t_token **out_end)
 	return (1);
 }
 
+static void	free_little_tree(t_ast	*node)
+{
+	if (!node)
+		return ;
+	free_little_tree(node->left);
+	free_little_tree(node->right);
+	free(node);
+	return ;
+}
+
 // return 0 when error (malloc fails), 1 when success
 int parser_build_pipeline(t_token *toks, t_ast **out_root)
 {
@@ -71,24 +81,30 @@ int parser_build_pipeline(t_token *toks, t_ast **out_root)
 
 	it = toks;
 
+	*out_root = NULL;
 	if (!next_segment(&it, &start, &end))
-	{
-		*out_root = NULL;
 		return (1);
-	}
 	p.left = ast_new_cmd(start, end);
 	if (!p.left)
-		printf("fuck\n");
+		return (0);
 	while (next_segment(&it, &start, &end))
 	{
 		p.right = ast_new_cmd(start, end);
 		if (!p.right)
-			printf("fuck\n");
+		{
+			free_little_tree(p.left);
+			return (0);
+		}
 		p.tmp = ast_new_pipe(p.left, p.right);
 		if (!p.tmp)
-			printf("fuck\n");
+		{
+			free_little_tree(p.right);
+			free_little_tree(p.left);
+			return (0);
+		}
 		p.left = p.tmp;
 	}
 	*out_root = p.left;
 	return (1);
 }
+
