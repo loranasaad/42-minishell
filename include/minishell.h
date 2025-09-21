@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 17:27:13 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/19 15:20:13 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/21 13:17:15 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,14 @@ void	replt(t_ms *ms);
 
 // environment list
 t_env	*env_init(char **envp);
+void	fill_env(char **envp, t_env	**env);
 int		add_env_var(t_env **env, char *key, char* value);
 char	*get_key(char *env_var);
 char	*env_get(t_env *env, char *key);
 int		env_set(t_env **env, char *key, char *value, int overwrite);
 int		env_unset(t_env **env, char *key);
 char	**env_to_envp(t_env *env);
+int		build_envp(t_env *env, char **envp);
 int		builtin_env(t_env *env);
 void	env_free(t_env **env);
 void	handle_shlvl(t_env **env);

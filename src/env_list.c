@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:49:41 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/19 17:20:16 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/21 13:26:42 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,7 @@
 // build the list with env variables (key, value)
 t_env	*env_init(char **envp)
 {
-	int		i;
 	t_env	*env;
-	char	*key;
-	char	*value;
 
 	env = NULL;
 	if (!envp || !envp[0])
@@ -26,6 +23,17 @@ t_env	*env_init(char **envp)
 		build_min_env(&env);
 		return (env);
 	}
+	fill_env(envp, &env);
+	handle_shlvl(&env);
+	return (env);
+}
+
+void	fill_env(char **envp, t_env	**env)
+{
+	int		i;
+	char	*key;
+	char	*value;
+
 	i = 0;
 	while (envp[i])
 	{	
@@ -35,15 +43,13 @@ t_env	*env_init(char **envp)
 			value = ft_strdup(value + 1);
 		else
 			value = ft_strdup("");
-		if (add_env_var(&env, key, value) == 1)
+		if (add_env_var(env, key, value) == 1)
 		{
-			env_free(&env);
-			return (NULL);
+			env_free(env);
+			exit (1); // malloc fails => stop there
 		}
 		i++;
 	}
-	handle_shlvl(&env);
-	return (env);
 }
 
 char	*get_key(char *env_var)
@@ -81,9 +87,7 @@ int	add_env_var(t_env **env, char *key, char* value)
 	{
 		tmp = *env;
 		while (tmp->next)
-		{
 			tmp = tmp->next;
-		}
 		tmp->next = var;
 	}
 	return (0);
@@ -198,7 +202,6 @@ char	**env_to_envp(t_env *env)
 	t_env	*w;
 	int		i;
 	char	**envp;
-	char	*tmp;
 
 	i = 0;
 	w = env;
@@ -210,32 +213,39 @@ char	**env_to_envp(t_env *env)
 	envp = malloc((i + 1) * sizeof(char *));
 	if (!envp)
 		return (NULL);
+	if (build_envp(env, envp) == 1)
+	{
+		free_str_arr(&envp);
+		return (NULL);
+	}	
+	return (envp);
+}
+
+int	build_envp(t_env *env, char **envp)
+{
+	t_env	*w;
+	int		i;
+	char	*tmp;
+
 	w = env;
 	i = 0;
 	while (w)
 	{
 		tmp = ft_strjoin(w->key, "=");
 		if (!tmp)
-		{
-			envp[i] = NULL;
-			free_str_arr(&envp);
-			return (NULL);
-		}
+			return (1);
 		if (w->value)
 			envp[i] = ft_strjoin(tmp, w->value);
 		else
 			envp[i] = ft_strdup(tmp);
 		free(tmp);
 		if (!envp[i])
-		{
-			free_str_arr(&envp);
-			return (NULL);
-		}
+			return (1);
 		w = w->next;
 		i++;
 	}
 	envp[i] = NULL;
-	return (envp);
+	return (0);
 }
 
 // destroy/free the env list
