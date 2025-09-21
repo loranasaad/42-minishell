@@ -4,7 +4,7 @@ CFLAGS  = -Wall -Wextra -Werror -Iinclude
 LDFLAGS =
 LDLIBS  =
 
-SRCS = src/main.c src/repl.c src/signals.c src/termios_helpers.c
+SRCS = src/main.c src/repl.c src/signals.c src/termios_helpers.c src/parser/parser_build.c
 OBJS = $(SRCS:.c=.o)
 
 # Detect OS to set readline include/lib paths and extra libs
