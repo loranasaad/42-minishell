@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 17:27:13 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/20 18:57:41 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/09/21 16:21:17 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+
+#include "parser.h"
 
 typedef	enum	e_tok
 {
