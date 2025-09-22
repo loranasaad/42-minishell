@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 17:27:13 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/21 16:21:17 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/09/22 16:00:27 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,31 @@ int		word_len(char *str, int *i);
 t_token	*tok_new(t_tok kind, char *val, int quoted);
 void	tok_push_back(t_token **head, t_token *node);
 void	free_tokens(t_token *t);
+
+// environment list
+t_env	*env_init(char **envp);
+void	fill_env(char **envp, t_env	**env);
+int		add_env_var(t_env **env, char *key, char* value);
+char	*get_key(char *env_var);
+char	*env_get(t_env *env, char *key);
+int		env_set(t_env **env, char *key, char *value, int overwrite);
+int		env_unset(t_env **env, char *key);
+char	**env_to_envp(t_env *env);
+int		build_envp(t_env *env, char **envp);
+void	env_free(t_env **env);
+void	handle_shlvl(t_env **env);
+void	build_min_env(t_env **env);
+void	free_str_arr(char ***words);
+
+// ft_lib
+int		ft_atoi(const char *str);
+char	*ft_itoa(int n);
+void	*ft_memcpy(void *dest, const void *src, size_t n);
+char	*ft_strchr(const char *s, int c);
+char	*ft_strdup(const char *src);
+char	*ft_strjoin(char const *s1, char const *s2);
+size_t	ft_strlen(const char *s);
+char	*ft_substr(char const *s, unsigned int start, size_t len);
+int		ft_strcmp(const char *s1, const char *s2); //this one is not part of libft
 
 #endif

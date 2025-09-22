@@ -1,29 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/15 18:01:42 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/22 15:39:15 by latabagl         ###   ########.fr       */
+/*   Created: 2025/09/22 15:56:05 by latabagl          #+#    #+#             */
+/*   Updated: 2025/09/22 15:56:19 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	main(int argc, char **argv, char **envp)
+int ft_strcmp(const char *s1, const char *s2)
 {
-	t_ms	ms;
-	
-	(void)argc;
-	(void)argv;
-	(void)envp;
-	ms.last_status = 0;
-	ms.interactive = isatty(STDIN_FILENO);
-	ms.env = env_init(envp);
-	// termios_disable_echoctl();
-	repl(&ms);
-	env_free(&(ms.env));
-	return ms.last_status;
+	int i;
+
+	i = 0;
+	while (s1[i] && s2[i] && s1[i] == s2[i])
+		i++;
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }

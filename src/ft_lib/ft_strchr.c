@@ -1,29 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/15 18:01:42 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/22 15:39:15 by latabagl         ###   ########.fr       */
+/*   Created: 2025/05/14 16:59:02 by latabagl          #+#    #+#             */
+/*   Updated: 2025/09/22 15:50:37 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	main(int argc, char **argv, char **envp)
+char	*ft_strchr(const char *s, int c)
 {
-	t_ms	ms;
-	
-	(void)argc;
-	(void)argv;
-	(void)envp;
-	ms.last_status = 0;
-	ms.interactive = isatty(STDIN_FILENO);
-	ms.env = env_init(envp);
-	// termios_disable_echoctl();
-	repl(&ms);
-	env_free(&(ms.env));
-	return ms.last_status;
+	while (*s)
+	{
+		if ((unsigned char) c == *s)
+			return ((char *) s);
+		s++;
+	}
+	if ((unsigned char) c == *s)
+		return ((char *) s);
+	return (NULL);
 }
