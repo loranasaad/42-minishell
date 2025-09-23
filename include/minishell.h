@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 17:27:13 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/22 16:00:27 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/22 23:57:44 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,9 @@ int		word_len(char *str, int *i);
 t_token	*tok_new(t_tok kind, char *val, int quoted);
 void	tok_push_back(t_token **head, t_token *node);
 void	free_tokens(t_token *t);
+
+//utils
+void	ms_perror(const char *prefix, const char *arg);
 
 // environment list
 t_env	*env_init(char **envp);

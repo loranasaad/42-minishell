@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_build.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 16:37:02 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/21 18:39:03 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/22 17:36:50 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
