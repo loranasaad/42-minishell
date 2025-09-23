@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 17:27:13 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/23 13:01:37 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/23 16:15:02 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,9 @@ int		build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out);
 t_redir	*build_tredir(t_token *tok);
 void	free_cmdspec(t_cmdspec *spec);
 char	**strv_push(char **v, const char *s);
+
+// builtin
+int		builtin_dispatch(char **argv, t_ms *ms);
 
 
 // ft_lib

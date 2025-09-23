@@ -10,7 +10,7 @@ SRCS = src/main.c src/repl.c src/signals.c src/termios_helpers.c src/parser/pars
         src/ft_lib/ft_strchr.c src/ft_lib/ft_strdup.c src/ft_lib/ft_strjoin.c \
         src/ft_lib/ft_strlen.c src/ft_lib/ft_substr.c src/ft_lib/ft_strcmp.c \
         src/ft_lib/ft_split.c src/env/path.c src/parser/comdspec1.c \
-        src/parser/comdspec2.c src/parser/comdspec3.c
+        src/parser/comdspec2.c src/parser/comdspec3.c src/builtin/builtin.c
 OBJS = $(SRCS:.c=.o)
 
 # Detect OS to set readline include/lib paths and extra libs
