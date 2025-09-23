@@ -8,7 +8,9 @@ SRCS = src/main.c src/repl.c src/signals.c src/termios_helpers.c src/parser/pars
         src/env/env_list1.c src/env/env_list2.c src/env/env_list3.c \
         src/ft_lib/ft_atoi.c src/ft_lib/ft_itoa.c src/ft_lib/ft_memcpy.c \
         src/ft_lib/ft_strchr.c src/ft_lib/ft_strdup.c src/ft_lib/ft_strjoin.c \
-        src/ft_lib/ft_strlen.c src/ft_lib/ft_substr.c src/ft_lib/ft_strcmp.c
+        src/ft_lib/ft_strlen.c src/ft_lib/ft_substr.c src/ft_lib/ft_strcmp.c \
+        src/ft_lib/ft_split.c src/env/path.c src/parser/comdspec1.c \
+        src/parser/comdspec2.c src/parser/comdspec3.c
 OBJS = $(SRCS:.c=.o)
 
 # Detect OS to set readline include/lib paths and extra libs
