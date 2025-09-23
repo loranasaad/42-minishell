@@ -1,23 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ast_free.c                                         :+:      :+:    :+:   */
+/*   exec.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/21 18:10:31 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/22 18:33:26 by loasaad          ###   ########.fr       */
+/*   Created: 2025/09/22 17:17:31 by loasaad           #+#    #+#             */
+/*   Updated: 2025/09/23 23:24:32 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
-#include <stdlib.h>
+#ifndef EXEC_C
+# define EXEC_C
 
-void	ast_free(t_ast *node)
-{
-	if (!node)
-		return ;
-	ast_free(node->left);
-	ast_free(node->right);
-	free(node);
-}
+# include "minishell.h"
+# include "parser.h"
+
+int	apply_redirs(const t_redir *rlist);
+int	exec_one_cmd(const t_cmdspec *spec, t_ms *ms);
+
+int	exec_run_node(t_ast *node, t_ms *ms);
+int	exec_pipeline(t_ast *root, t_ms *ms);
+
+#endif

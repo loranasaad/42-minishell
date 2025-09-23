@@ -1,23 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ast_free.c                                         :+:      :+:    :+:   */
+/*   exec_pipeline.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/21 18:10:31 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/22 18:33:26 by loasaad          ###   ########.fr       */
+/*   Created: 2025/09/24 00:00:47 by loasaad           #+#    #+#             */
+/*   Updated: 2025/09/24 00:03:45 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "exec.h"
+#include "minishell.h"
 #include "parser.h"
-#include <stdlib.h>
 
-void	ast_free(t_ast *node)
+int	exec_pipeline(t_ast *root, t_ms *ms)
 {
-	if (!node)
-		return ;
-	ast_free(node->left);
-	ast_free(node->right);
-	free(node);
+	(void)root;
+	(void)ms;
+	return (2);
 }

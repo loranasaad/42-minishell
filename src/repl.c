@@ -6,26 +6,28 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 16:20:57 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/21 18:46:05 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/09/23 23:54:57 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "parser.h"
+#include "exec.h"
 #include <signal.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 
 void	repl(t_ms *ms)
 {
-	char	*line;
-	t_token	*toks;
-	t_ast	*ast;
-	int		lex_status;
-	int		parse_status;
+	char		*line;
+	t_token		*toks;
+	t_ast		*ast;
+	int			lex_status;
+	int			parse_status;
+	t_cmdspec	spec;
+	extern int rl_catch_signals;
 	
 	init_prompt_signals();
-	extern int rl_catch_signals;
     rl_catch_signals = 0;
 	while (1)
 	{
@@ -66,10 +68,9 @@ void	repl(t_ms *ms)
 			free_tokens(toks);
 			continue;
 		}
-		ms->last_status = 0;
+		ms->last_status = exec_run_node(ast, ms);
 		ast_free(ast);
 		free_tokens(toks);
-		//TODO: execute
 	}
 }
 

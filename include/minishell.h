@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/15 17:27:13 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/23 18:58:14 by latabagl         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
@@ -72,6 +61,9 @@ t_token	*tok_new(t_tok kind, char *val, int quoted);
 void	tok_push_back(t_token **head, t_token *node);
 void	free_tokens(t_token *t);
 
+//utils
+void	ms_perror(const char *prefix, const char *arg);
+
 // environment list
 t_env	*env_init(char **envp);
 void	fill_env(char **envp, t_env	**env);
@@ -108,5 +100,9 @@ size_t	ft_strlen(const char *s);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 int		ft_strcmp(const char *s1, const char *s2); //this one is not part of libft
 char	**ft_split(char const *s, char c);
+
+// env
+char	*find_in_path(const char *name, t_env *env);
+
 
 #endif

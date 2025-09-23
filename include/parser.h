@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/22 16:21:44 by loasaad           #+#    #+#             */
+/*   Updated: 2025/09/22 22:50:07 by loasaad          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef PARSER_H
 # define PARSER_H
@@ -27,18 +37,31 @@ typedef struct s_pipeline
 	t_ast *tmp;
 } t_pipeline;
 
-typedef enum e_rkind { R_IN, R_OUT, R_APP, R_HDOC } t_rkind;
 
-typedef struct s_redir {
+typedef enum	e_rkind
+{
+	R_IN,
+	R_OUT,
+	R_APP,
+	R_HDOC,
+}				t_rkind;
+
+typedef struct s_redir
+{
 	t_rkind			kind;
-	char			*target; // filename or heredoc limiter (dup’d)
-	struct s_redir	*next;
-} t_redir;
+	char 			*target;
+	struct	s_redir	*next;
+}					t_redir;
 
-typedef struct s_cmdspec {
+typedef	struct	s_cmdspec
+{
 	char	**argv;
-	t_redir *redirs;
-} t_cmdspec;
+	t_redir	*redirs;
+}			t_cmdspec;
+
+
+int		build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out);
+void	free_cmdspec(t_cmdspec *spec);
 
 t_ast	*parse_line(t_token *toks, int *status);
 void	ast_free(t_ast *n);
