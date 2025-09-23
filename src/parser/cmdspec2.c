@@ -6,14 +6,13 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 12:55:04 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/23 13:02:01 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/23 19:32:24 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "parser.h"
 
-static size_t	len_str_arr(char **words);
 static void		free_redirs(t_redir **redirs);
 
 void	free_cmdspec(t_cmdspec *spec)
@@ -41,23 +40,8 @@ static void	free_redirs(t_redir **redirs)
 	*redirs = NULL;
 }
 
-// return length of a string array
-static size_t	len_str_arr(char **words)
-{
-	size_t	i;
-
-	i = 0;
-	if (!words)
-		return (0);
-	while (words[i])
-	{
-		i++;
-	}
-	return (i);
-}
-
 // build a t_redir struct
-static t_redir	*build_tredir(t_token *tok)
+t_redir	*build_tredir(t_token *tok)
 {
 	t_redir	*redir;
 

@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 17:44:52 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/23 13:02:10 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/23 19:30:24 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out)
 				return (0);
 			w = w->next;
 		}
-		else if (is_redir(w->kind))
+		else if (is_redir(w))
 		{
 			if (!handle_redir(out, w))
 				return (0);

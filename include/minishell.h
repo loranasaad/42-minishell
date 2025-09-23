@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 17:27:13 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/23 16:15:02 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/23 18:58:14 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	handle_shlvl(t_env **env);
 void	build_min_env(t_env **env);
 void	free_str_arr(char ***words);
 
-char	*find_in_path(char *name, t_env *env);
+char	*find_in_path(char const *name, t_env *env);
 int		build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out);
 t_redir	*build_tredir(t_token *tok);
 void	free_cmdspec(t_cmdspec *spec);
