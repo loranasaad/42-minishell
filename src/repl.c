@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 16:20:57 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/22 21:50:43 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/09/23 23:54:57 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,28 +68,9 @@ void	repl(t_ms *ms)
 			free_tokens(toks);
 			continue;
 		}
-		if (ast->kind == AST_PIPE)
-		{
-			//skip on day5
-		}
-		else if (ast->kind == AST_CMD)
-		{
-			spec.argv = NULL;
-			spec.redirs = NULL;
-
-			if (!build_cmdspec_from_segment(ast->start, ast->end, &spec))
-				{
-					ms->last_status = 2;
-					ast_free(ast);
-					free_tokens(toks);
-					continue;
-				}
-			ms->last_status = exec_one_cmd(&spec, ms);
-			free_cmdspec(&spec);
-		}
+		ms->last_status = exec_run_node(ast, ms);
 		ast_free(ast);
 		free_tokens(toks);
-		//TODO: execute
 	}
 }
 
