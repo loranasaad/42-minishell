@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 17:27:13 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/22 23:57:44 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/09/23 20:19:17 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,5 +100,9 @@ char	*ft_strjoin(char const *s1, char const *s2);
 size_t	ft_strlen(const char *s);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 int		ft_strcmp(const char *s1, const char *s2); //this one is not part of libft
+
+// env
+char	*find_in_path(const char *name, t_env *env);
+
 
 #endif

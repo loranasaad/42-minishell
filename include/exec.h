@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 17:17:31 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/22 18:24:49 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/09/23 23:24:32 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,5 +18,8 @@
 
 int	apply_redirs(const t_redir *rlist);
 int	exec_one_cmd(const t_cmdspec *spec, t_ms *ms);
+
+int	exec_run_node(t_ast *node, t_ms *ms);
+int	exec_pipeline(t_ast *root, t_ms *ms);
 
 #endif
