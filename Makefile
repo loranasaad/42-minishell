@@ -36,6 +36,7 @@ SRCS = \
 	src/ft_lib/ft_strlen.c \
 	src/ft_lib/ft_substr.c \
 	src/ft_lib/ft_strcmp.c
+  
 OBJS = $(SRCS:.c=.o)
 
 # Detect OS to set readline include/lib paths and extra libs

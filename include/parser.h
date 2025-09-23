@@ -37,7 +37,6 @@ typedef struct s_pipeline
 	t_ast *tmp;
 } t_pipeline;
 
-//Laura
 
 typedef enum	e_rkind
 {
@@ -63,7 +62,6 @@ typedef	struct	s_cmdspec
 
 int		build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out);
 void	free_cmdspec(t_cmdspec *spec);
-// end of Laura's h file
 
 t_ast	*parse_line(t_token *toks, int *status);
 void	ast_free(t_ast *n);

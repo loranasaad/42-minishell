@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/15 17:27:13 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/23 20:19:17 by loasaad          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
@@ -90,6 +79,16 @@ void	handle_shlvl(t_env **env);
 void	build_min_env(t_env **env);
 void	free_str_arr(char ***words);
 
+char	*find_in_path(char const *name, t_env *env);
+int		build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out);
+t_redir	*build_tredir(t_token *tok);
+void	free_cmdspec(t_cmdspec *spec);
+char	**strv_push(char **v, const char *s);
+
+// builtin
+int		builtin_dispatch(char **argv, t_ms *ms);
+
+
 // ft_lib
 int		ft_atoi(const char *str);
 char	*ft_itoa(int n);
@@ -100,6 +99,7 @@ char	*ft_strjoin(char const *s1, char const *s2);
 size_t	ft_strlen(const char *s);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 int		ft_strcmp(const char *s1, const char *s2); //this one is not part of libft
+char	**ft_split(char const *s, char c);
 
 // env
 char	*find_in_path(const char *name, t_env *env);

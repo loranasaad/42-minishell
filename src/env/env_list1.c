@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:17:24 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/22 15:20:41 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/09/23 18:03:59 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,11 @@ int	add_env_var(t_env **env, char *key, char *value)
 
 void	build_min_env(t_env **env)
 {
+	char	*cwd;
+
+	cwd = getcwd(NULL, 0);
 	env_set(env, "SHLVL", "1", 0);
-	env_set(env, "PWD", getcwd(NULL, 0), 0);
+	env_set(env, "PWD", cwd, 0);
 	env_set(env, "PATH", "/usr/bin:/bin", 0);
+	free(cwd);
 }
