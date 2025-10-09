@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_node.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:30:53 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/23 23:45:50 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/05 18:36:56 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	exec_run_node(t_ast *node, t_ms *ms)
 	{
 		spec.argv = NULL;
 		spec.redirs = NULL;
-		if (!build_cmdspec_from_segment(node->start, node->end, &spec))
+		if (!build_cmdspec_from_segment(node->start, node->end, &spec, ms))
 			return (2);
 		ms->last_status = exec_one_cmd(&spec, ms);
 		free_cmdspec(&spec);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 16:21:44 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/22 22:50:07 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/09 14:51:25 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,6 @@ typedef	struct	s_cmdspec
 	t_redir	*redirs;
 }			t_cmdspec;
 
-
-int		build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out);
 void	free_cmdspec(t_cmdspec *spec);
 
 t_ast	*parse_line(t_token *toks, int *status);
