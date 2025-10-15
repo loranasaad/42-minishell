@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 11:44:36 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/13 19:00:40 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/15 13:06:13 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ int	field_split(char *val, t_cmdspec *out)
 	int		start;
 	int		end;
 	int		i;
-	int		j;
 
 	start = 0;
 	i = 0;
