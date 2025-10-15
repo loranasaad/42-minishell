@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/05 16:21:03 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/05 16:51:59 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/13 18:19:47 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,9 @@ static char	*get_expanded_segment(char *str, int *i, t_ms *ms);
 
 char	*get_next_segment(char *str, int *i, t_ms *ms, int *end)
 {
-	char	*result;
-
 	*end = 0;
 	if (!str[*i])
-	{
-		*end = 1;
-		return (NULL);
-	}
+		return (*end = 1, NULL);
 	else if (str[*i] == '$')
 	{
 		(*i)++;
@@ -39,7 +34,7 @@ char	*get_next_segment(char *str, int *i, t_ms *ms, int *end)
 		else if (str[*i] == ' ' || str[*i] == '\t' || str[*i] == '\0')
 			return (ft_strdup("$"));
 		else if (is_valid_first_char(str[*i]))
-			result = get_expanded_segment(str, i, ms);
+			return (get_expanded_segment(str, i, ms));
 		else
 		{
 			(*i)++;
@@ -47,8 +42,7 @@ char	*get_next_segment(char *str, int *i, t_ms *ms, int *end)
 		}
 	}
 	else
-		result = get_normal_segment(str, i);
-	return (result);
+		return (get_normal_segment(str, i));
 }
 
 static char	*get_normal_segment(char *str, int *i)

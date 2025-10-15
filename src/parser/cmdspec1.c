@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 17:44:52 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/06 17:26:08 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/13 18:51:25 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ static int		handle_redir(t_cmdspec *out, t_token *tok, t_ms *ms);
 static int		is_redir(t_token *tok);
 static void		redir_push_back(t_redir **redirs, t_redir *redir);
 
-int	build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out, t_ms *ms)
+int	build_cmdspec_from_segment(t_token *start,
+	t_token *end,
+	t_cmdspec *out,
+	t_ms *ms)
 {
 	t_token	*w;
 

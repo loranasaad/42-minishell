@@ -6,12 +6,16 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/04 12:20:21 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/05 16:51:51 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/13 22:44:28 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "parser.h"
+
+static char	*join_res_seg(char *result, char *segment);
+
+// {$VAR}  should we deal with that ?
 
 // return malloced str of input with var expansion; status is 0 if malloc failed
 char	*handle_var_expansion(char *str, int quoted, t_ms *ms, int *status)
@@ -40,14 +44,13 @@ char	*expand_dollar_sign(char *str, t_ms *ms)
 	int		end;
 	char	*result;
 	char	*segment;
-	char	*tmp;
 
 	i = 0;
 	result = ft_strdup("");
-	if (!result)
-		return (NULL);
 	while (1)
 	{
+		if (!result)
+			return (NULL);
 		segment = get_next_segment(str, &i, ms, &end);
 		if (!segment && end)
 			break ;
@@ -57,12 +60,18 @@ char	*expand_dollar_sign(char *str, t_ms *ms)
 			result = NULL;
 			break ;
 		}
-		tmp = result;
-		result = ft_strjoin(result, segment);
-		free(tmp);
-		free(segment);
-		if (!result)
-			break ;
+		result = join_res_seg(result, segment);
 	}
+	return (result);
+}
+
+static char	*join_res_seg(char *result, char *segment)
+{
+	char	*tmp;
+
+	tmp = result;
+	result = ft_strjoin(result, segment);
+	free(tmp);
+	free(segment);
 	return (result);
 }

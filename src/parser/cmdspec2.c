@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 12:55:04 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/06 19:51:42 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/13 18:52:34 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,14 @@ t_redir	*build_tredir(t_token *tok, t_ms *ms)
 	if (!redir)
 		return (NULL);
 	redir->kind = tok->kind - TK_IN;
-	redir->target = handle_var_expansion(tok->next->val, tok->next->quoted, ms, &status);
+	redir->target = handle_var_expansion(tok->next->val,
+			tok->next->quoted, ms, &status);
 	multiple = several_fields(tok->next->quoted, redir->target);
 	if (!redir->target || !status || multiple)
 	{
 		if (multiple)
 			redir_several_fields_error(tok->next->val);
+		free(redir->target);
 		free(redir);
 		return (NULL);
 	}
@@ -69,12 +71,11 @@ t_redir	*build_tredir(t_token *tok, t_ms *ms)
 
 static void	redir_several_fields_error(const char *val)
 {
-	const	char	*s1;
-	const	char	*s2;
+	const char	*s1;
+	const char	*s2;
 
 	s1 = "minishell: ";
 	s2 = ": ambiguous redirect\n";
-
 	write(2, s1, ft_strlen(s1));
 	write(2, val, ft_strlen(val));
 	write(2, s2, ft_strlen(s2));
