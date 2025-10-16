@@ -41,6 +41,8 @@ typedef struct s_ms
 	int		interactive;
 }			t_ms;
 
+#define IFS " \t\n"
+
 extern	int	g_signal;
 
 void	repl(t_ms *ms);
@@ -80,8 +82,8 @@ void	build_min_env(t_env **env);
 void	free_str_arr(char ***words);
 
 char	*find_in_path(char const *name, t_env *env);
-int		build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out);
-t_redir	*build_tredir(t_token *tok);
+int		build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out, t_ms *ms);
+t_redir	*build_tredir(t_token *tok, t_ms *ms);
 void	free_cmdspec(t_cmdspec *spec);
 char	**strv_push(char **v, const char *s);
 
@@ -103,6 +105,13 @@ char	**ft_split(char const *s, char c);
 
 // env
 char	*find_in_path(const char *name, t_env *env);
+
+// var expansion
+char	*handle_var_expansion(char *str, int quoted, t_ms *ms, int *status);
+char	*get_next_segment(char *str, int *i, t_ms *ms, int *end);
+char	*expand_dollar_sign(char *str, t_ms *ms);
+int		several_fields(int quoted, char	*val);
+int	field_split(char *val, t_cmdspec *out);
 
 
 #endif

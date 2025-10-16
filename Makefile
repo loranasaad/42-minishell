@@ -19,13 +19,22 @@ SRCS = \
 	src/parser/validate.c \
 	src/parser/ast_free.c \
 	src/parser/parser_build.c \
+	src/parser/cmdspec1.c \
+	src/parser/cmdspec2.c \
+	src/parser/cmdspec3.c \
+	src/parser/var_expansion.c \
+	src/parser/var_expansion2.c \
+	src/parser/field_split.c \
 	\
 	src/env/env_list1.c \
 	src/env/env_list2.c \
 	src/env/env_list3.c \
+	src/env/path.c \
 	\
 	src/exec/exec_one.c \
 	src/exec/redir.c \
+	src/exec/exec_node.c \
+	src/exec/exec_pipeline.c \
 	\
 	src/ft_lib/ft_atoi.c \
 	src/ft_lib/ft_itoa.c \
@@ -35,6 +44,7 @@ SRCS = \
 	src/ft_lib/ft_strjoin.c \
 	src/ft_lib/ft_strlen.c \
 	src/ft_lib/ft_substr.c \
+	src/ft_lib/ft_split.c \
 	src/ft_lib/ft_strcmp.c
   
 OBJS = $(SRCS:.c=.o)
