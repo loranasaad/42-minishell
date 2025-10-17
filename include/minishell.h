@@ -85,10 +85,6 @@ t_redir	*build_tredir(t_token *tok);
 void	free_cmdspec(t_cmdspec *spec);
 char	**strv_push(char **v, const char *s);
 
-// builtin
-int		builtin_dispatch(char **argv, t_ms *ms);
-
-
 // ft_lib
 int		ft_atoi(const char *str);
 char	*ft_itoa(int n);
@@ -104,5 +100,7 @@ char	**ft_split(char const *s, char c);
 // env
 char	*find_in_path(const char *name, t_env *env);
 
+// builtin
+void	builtin_dispatch(char **argv, t_ms *ms, int *rc);
 
 #endif
