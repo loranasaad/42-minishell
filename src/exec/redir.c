@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:24:21 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/23 00:35:40 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/19 15:01:11 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ static int	do_redir(const char *path, int flags, int target_fd)
 {
 	int	fd;
 	
-	if (flags & O_CREAT)
+	if (flags & O_CREAT)				// R_OUT R_APP
 		fd = open(path, flags, 0644);
 	else
-		fd = open(path, flags);
+		fd = open(path, flags);			//R_IN
 	if (fd < 0)
 	{
 		ms_perror("minishell", path);
