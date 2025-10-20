@@ -36,6 +36,14 @@ SRCS = \
 	src/exec/exec_node.c \
 	src/exec/exec_pipeline.c \
 	\
+	src/builtin/cd.c \
+	src/builtin/echo.c \
+	src/builtin/env.c \
+	src/builtin/exit.c \
+	src/builtin/export.c \
+	src/builtin/pwd.c \
+	src/builtin/unset.c \
+	\
 	src/ft_lib/ft_atoi.c \
 	src/ft_lib/ft_itoa.c \
 	src/ft_lib/ft_memcpy.c \

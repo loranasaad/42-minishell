@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 
 #include "parser.h"
 
@@ -89,6 +91,13 @@ char	**strv_push(char **v, const char *s);
 
 // builtin
 int		builtin_dispatch(char **argv, t_ms *ms);
+int		builtin_echo(char **argv);
+int		builtin_pwd(char **argv);
+int		builtin_cd(char **argv, t_ms *ms);
+int		builtin_env( char **argv, t_ms *ms);
+int		builtin_unset(char **argv, t_ms *ms);
+int		builtin_export(char **argv, t_ms *ms);
+int		builtin_exit(char **argv, t_ms *ms, int in_parent);
 
 
 // ft_lib
