@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 16:21:44 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/22 22:50:07 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/20 15:20:32 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ typedef struct s_redir
 {
 	t_rkind			kind;
 	char 			*target;
+	int				hdoc_exp;
+	int				hdoc_fd;
 	struct	s_redir	*next;
 }					t_redir;
 
