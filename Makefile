@@ -36,6 +36,8 @@ SRCS = \
 	src/exec/exec_node.c \
 	src/exec/exec_pipeline.c \
 	\
+	src/expand/expand_heredoc.c \
+	\
 	src/ft_lib/ft_atoi.c \
 	src/ft_lib/ft_itoa.c \
 	src/ft_lib/ft_memcpy.c \

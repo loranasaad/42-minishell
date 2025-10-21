@@ -84,8 +84,10 @@ void	free_str_arr(char ***words);
 char	*find_in_path(char const *name, t_env *env);
 int		build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out, t_ms *ms);
 t_redir	*build_tredir(t_token *tok, t_ms *ms);
+t_redir	*build_heredoc(t_token *tok);
 void	free_cmdspec(t_cmdspec *spec);
 char	**strv_push(char **v, const char *s);
+char	*expand_heredoc_line(char *in, t_ms *ms);
 
 // builtin
 int		builtin_dispatch(char **argv, t_ms *ms);
@@ -111,7 +113,10 @@ char	*handle_var_expansion(char *str, int quoted, t_ms *ms, int *status);
 char	*get_next_segment(char *str, int *i, t_ms *ms, int *end);
 char	*expand_dollar_sign(char *str, t_ms *ms);
 int		several_fields(int quoted, char	*val);
-int	field_split(char *val, t_cmdspec *out);
+int		field_split(char *val, t_cmdspec *out);
+
+// debug
+void	print_redir(t_redir *redir);
 
 
 #endif
