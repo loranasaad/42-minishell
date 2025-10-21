@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 12:59:57 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/23 19:32:45 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/13 18:52:51 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,3 @@ static size_t	len_str_arr(char **words)
 	}
 	return (i);
 }
-

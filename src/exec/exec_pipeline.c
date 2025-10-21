@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_pipeline.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:00:47 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/20 13:58:56 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/20 21:43:25 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ static	void exec_child(t_ast *node, t_ms *ms, int i, int len, int (* pipes)[2])
 	close_pipes(pipes, len);
 	spec.argv = NULL;
 	spec.redirs = NULL;
-	if (!build_cmdspec_from_segment(node->start, node->end, &spec))
+	if (!build_cmdspec_from_segment(node->start, node->end, &spec, ms))
 		exit(2);
 	if (!apply_redirs(spec.redirs))
 	{
@@ -158,11 +158,11 @@ static	void exec_child(t_ast *node, t_ms *ms, int i, int len, int (* pipes)[2])
 		execve(spec.argv[0], spec.argv, envp);
 		if (errno == ENOENT)
 		{
-			free_str_arr(envp);
+			free_str_arr(&envp);
 			free_cmdspec(&spec);
 			exit(127);
 		}
-		free_str_arr(envp);
+		free_str_arr(&envp);
 		free_cmdspec(&spec);
 		exit(126);			
 	}
@@ -170,7 +170,7 @@ static	void exec_child(t_ast *node, t_ms *ms, int i, int len, int (* pipes)[2])
 	if (!full_path)
 	{
 		exec_error(spec.argv[0]);
-		free_str_arr(envp);
+		free_str_arr(&envp);
 		free_cmdspec(&spec);
 		exit(127);
 	}
@@ -178,12 +178,12 @@ static	void exec_child(t_ast *node, t_ms *ms, int i, int len, int (* pipes)[2])
 	if (errno == ENOENT)
 	{
 		free(full_path);
-		free_str_arr(envp);
+		free_str_arr(&envp);
 		free_cmdspec(&spec);
 		exit(127);
 	}
 	free(full_path);
-	free_str_arr(envp);
+	free_str_arr(&envp);
 	free_cmdspec(&spec);
 	exit(126);		
 }

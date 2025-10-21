@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 
 #include "parser.h"
 
@@ -40,6 +42,8 @@ typedef struct s_ms
 	int		last_status;
 	int		interactive;
 }			t_ms;
+
+#define IFS " \t\n"
 
 extern	int	g_signal;
 
@@ -80,8 +84,8 @@ void	build_min_env(t_env **env);
 void	free_str_arr(char ***words);
 
 char	*find_in_path(char const *name, t_env *env);
-int		build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out);
-t_redir	*build_tredir(t_token *tok);
+int		build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out, t_ms *ms);
+t_redir	*build_tredir(t_token *tok, t_ms *ms);
 void	free_cmdspec(t_cmdspec *spec);
 char	**strv_push(char **v, const char *s);
 
@@ -102,5 +106,19 @@ char	*find_in_path(const char *name, t_env *env);
 
 // builtin
 void	builtin_dispatch(char **argv, t_ms *ms, int *rc);
+int		builtin_echo(char **argv);
+int		builtin_pwd(char **argv);
+int		builtin_cd(char **argv, t_ms *ms);
+int		builtin_env( char **argv, t_ms *ms);
+int		builtin_unset(char **argv, t_ms *ms);
+int		builtin_export(char **argv, t_ms *ms);
+int		builtin_exit(char **argv, t_ms *ms, int in_parent);
+
+// var expansion
+char	*handle_var_expansion(char *str, int quoted, t_ms *ms, int *status);
+char	*get_next_segment(char *str, int *i, t_ms *ms, int *end);
+char	*expand_dollar_sign(char *str, t_ms *ms);
+int		several_fields(int quoted, char	*val);
+int	field_split(char *val, t_cmdspec *out);
 
 #endif

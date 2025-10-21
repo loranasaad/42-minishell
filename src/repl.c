@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   repl.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 16:20:57 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/23 23:54:57 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/20 20:08:27 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	repl(t_ms *ms)
 	t_ast		*ast;
 	int			lex_status;
 	int			parse_status;
-	t_cmdspec	spec;
+	//t_cmdspec	spec;
 	extern int rl_catch_signals;
 	
 	init_prompt_signals();

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_one.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:26:43 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/20 13:58:56 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/20 20:15:22 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static	void	restore_std(int std_backup[2])
 	}
 }
 
-static	int	exec_stateful(t_cmdspec *spec, t_ms *ms)
+static	int	exec_stateful(const t_cmdspec *spec, t_ms *ms)
 {
 	int	std_backup[2];
 	int	rc;
@@ -111,28 +111,28 @@ int	exec_one_cmd(const t_cmdspec *spec, t_ms *ms)
 			execve(spec->argv[0], spec->argv, envp);
 			if (errno == ENOENT)
 			{
-				free_str_arr(envp);
+				free_str_arr(&envp);
 				exit(127);
 			}
-			free_str_arr(envp);
+			free_str_arr(&envp);
 			exit(126);
 		}
 		full_path = find_in_path(spec->argv[0], ms->env);
 		if (!full_path)
 		{
 			exec_error(spec->argv[0]);
-			free_str_arr(envp);
+			free_str_arr(&envp);
 			exit(127);
 		}
 		execve(full_path, spec->argv, envp);
 		if (errno == ENOENT)
 		{
 			free(full_path);
-			free_str_arr(envp);
+			free_str_arr(&envp);
 			exit(127);
 		}
 		free(full_path);
-		free_str_arr(envp);
+		free_str_arr(&envp);
 		exit(126);		
 	}	
 	if (waitpid(pid, &status, 0) < 0)
