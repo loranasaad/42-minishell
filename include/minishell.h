@@ -81,7 +81,7 @@ void	free_str_arr(char ***words);
 
 char	*find_in_path(char const *name, t_env *env);
 int		build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out);
-t_redir	*build_tredir(t_token *tok);
+t_redir	*build_tredir(t_token *tok, t_ms *ms);
 void	free_cmdspec(t_cmdspec *spec);
 char	**strv_push(char **v, const char *s);
 

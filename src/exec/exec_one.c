@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:26:43 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/20 13:58:56 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/20 17:17:19 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,8 @@ int	exec_one_cmd(const t_cmdspec *spec, t_ms *ms)
 		rc = exec_stateful(spec, ms);
 		return (rc);
 	}
+	if (!hdoc_prepare(spec->redirs, ms))		//hdoc preparation
+		return (1);
 	pid = fork();
 	if (pid < 0)
 	{

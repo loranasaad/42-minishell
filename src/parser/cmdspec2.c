@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdspec2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 12:55:04 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/23 19:32:24 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/21 18:13:05 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "parser.h"
 
 static void		free_redirs(t_redir **redirs);
+static void		redir_several_fields_error(const char *val);
 
 void	free_cmdspec(t_cmdspec *spec)
 {
@@ -34,6 +35,8 @@ static void	free_redirs(t_redir **redirs)
 	{
 		destroy = w;
 		w = w->next;
+		if (destroy->kind == R_HDOC && destroy->hdoc_fd >= 0)	//Loran: added safety closes heredoc fd if still open
+			close(destroy->hdoc_fd);
 		free(destroy->target);
 		free(destroy);
 	}
@@ -41,7 +44,36 @@ static void	free_redirs(t_redir **redirs)
 }
 
 // build a t_redir struct
-t_redir	*build_tredir(t_token *tok)
+t_redir	*build_tredir(t_token *tok, t_ms *ms)
+{
+	t_redir	*redir;
+	int		status;
+	int		multiple;
+
+	if (!tok || !tok->next || !tok->next->val)
+		return (NULL);
+	redir = malloc(sizeof(t_redir));
+	if (!redir)
+		return (NULL);
+	redir->kind = tok->kind - TK_IN;
+	redir->target = handle_var_expansion(tok->next->val,
+			tok->next->quoted, ms, &status);
+	multiple = several_fields(tok->next->quoted, redir->target);
+	if (!redir->target || !status || multiple)
+	{
+		if (multiple)
+			redir_several_fields_error(tok->next->val);
+		free(redir->target);
+		free(redir);
+		return (NULL);
+	}
+	redir->hdoc_exp = -1;
+	redir->hdoc_fd = -1;
+	redir->next = NULL;
+	return (redir);
+}
+
+t_redir	*build_heredoc(t_token *tok)
 {
 	t_redir	*redir;
 
@@ -50,13 +82,30 @@ t_redir	*build_tredir(t_token *tok)
 	redir = malloc(sizeof(t_redir));
 	if (!redir)
 		return (NULL);
-	redir->kind = tok->kind - TK_IN;
+	redir->kind = R_HDOC;
+	redir->hdoc_fd = -1;
 	redir->target = ft_strdup(tok->next->val);
-	if (!redir->target)
+	if (!redir->target)		//Loran: added for safety
 	{
 		free(redir);
 		return (NULL);
 	}
+	if (tok->next->quoted == 0)
+		redir->hdoc_exp = 1;
+	else
+		redir->hdoc_exp = 0;
 	redir->next = NULL;
 	return (redir);
+}
+
+static void	redir_several_fields_error(const char *val)
+{
+	const char	*s1;
+	const char	*s2;
+
+	s1 = "minishell: ";
+	s2 = ": ambiguous redirect\n";
+	write(2, s1, ft_strlen(s1));
+	write(2, val, ft_strlen(val));
+	write(2, s2, ft_strlen(s2));
 }

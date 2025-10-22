@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:00:47 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/20 13:58:56 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/20 23:39:39 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,19 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/wait.h>
+
+
+static	void	free_specs(t_cmdspec *specs, int len)
+{	
+	int	i;
+	i = 0;
+	while (i < len)
+	{
+		free_cmdspec(&specs[i]);
+		i++;
+	}
+	free(specs);
+}
 
 static	void	close_pipes(int (* pipes)[2], int len)
 {
@@ -104,9 +117,8 @@ static	int	wait_pipeline(pid_t *pids, int len)
 	return (rc);
 }
 
-static	void exec_child(t_ast *node, t_ms *ms, int i, int len, int (* pipes)[2])
+static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *ms)
 {
-	t_cmdspec spec;
 	char	**envp;
 	char	*full_path;
 	int		rc;
@@ -125,93 +137,114 @@ static	void exec_child(t_ast *node, t_ms *ms, int i, int len, int (* pipes)[2])
 		exit (1);
 	}
 	close_pipes(pipes, len);
-	spec.argv = NULL;
-	spec.redirs = NULL;
-	if (!build_cmdspec_from_segment(node->start, node->end, &spec))
-		exit(2);
-	if (!apply_redirs(spec.redirs))
-	{
-		free_cmdspec(&spec);
+	if (!apply_redirs(spec->redirs))
 		exit (1);
-	}
-	if(!spec.argv || !spec.argv[0])		//filter the pure redirections 
-	{
-		free_cmdspec(&spec);
+	if(!spec->argv || !spec->argv[0])		//filter the pure redirections 
 		exit(0);
-	}
-	if (is_builtin(spec.argv[0]))
+	if (is_builtin(spec->argv[0]))
 	{
-		builtin_dispatch(spec.argv, ms, &rc);
-		free_cmdspec(&spec);
+		builtin_dispatch(spec->argv, ms, &rc);
 		exit (rc);
 	}
 	envp = env_to_envp(ms->env);
 	if (!envp)
 	{
 		ms_perror("minishell", "env");
-		free_cmdspec(&spec);
 		exit(1);
 	}
 		//if it has a direct path
-	if (ft_strchr(spec.argv[0], '/'))
+	if (ft_strchr(spec->argv[0], '/'))
 	{
-		execve(spec.argv[0], spec.argv, envp);
+		execve(spec->argv[0], spec->argv, envp);
 		if (errno == ENOENT)
 		{
-			free_str_arr(envp);
-			free_cmdspec(&spec);
+			free_str_arr(&envp);
 			exit(127);
 		}
-		free_str_arr(envp);
-		free_cmdspec(&spec);
+		free_str_arr(&envp);
 		exit(126);			
 	}
-	full_path = find_in_path(spec.argv[0], ms->env);
+	full_path = find_in_path(spec->argv[0], ms->env);
 	if (!full_path)
 	{
-		exec_error(spec.argv[0]);
-		free_str_arr(envp);
-		free_cmdspec(&spec);
+		exec_error(spec->argv[0]);
+		free_str_arr(&envp);
 		exit(127);
 	}
-	execve(full_path, spec.argv, envp);
+	execve(full_path, spec->argv, envp);
 	if (errno == ENOENT)
 	{
 		free(full_path);
-		free_str_arr(envp);
-		free_cmdspec(&spec);
+		free_str_arr(&envp);
 		exit(127);
 	}
 	free(full_path);
-	free_str_arr(envp);
-	free_cmdspec(&spec);
+	free_str_arr(&envp);
 	exit(126);		
 }
 
 int	exec_pipeline(t_ast *root, t_ms *ms)
 {
-	t_ast	**commands;
-	int		len;
-	pid_t	*pids;
-	int		(*pipes)[2];
-	int		i;
-	int		rc;
+	t_ast		**stages;
+	int			len;
+	pid_t		*pids;
+	int			(*pipes)[2];
+	int			i;
+	int			rc;
+	t_cmdspec	*specs;
 
 	len = count_pipeline(root);
-	commands = malloc(len * sizeof(t_ast *));
-	if (!commands)
+	stages = malloc(len * sizeof(*stages));
+	if (!stages)
 		return (1);
-	flatten_pipeline(root, commands, len);
+	flatten_pipeline(root, stages, len);
+	specs = malloc(sizeof(*specs) * len);
+	if (!specs)
+	{
+		free(stages);
+		return (1);
+	}
+	i = 0;
+	while (i < len)
+	{
+		specs[i].argv = NULL;
+		specs[i].redirs = NULL;
+		if (!build_cmdspec_from_segment(stages[i]->start, stages[i]->end, &specs[i]))
+		{
+			free_specs(specs, i);
+			free(stages);
+			return(2);
+		}
+		i++;
+	}
+	i = 0;
+	while (i < len)
+	{
+		if (!hdoc_prepare(specs[i].redirs, ms))		//hdoc preparation
+		{
+			hdoc_cleanup(specs, len);
+			free_specs(specs, len);
+			free(stages);
+			if (ms->last_status)
+				return (ms->last_status);
+			return (1);
+		}
+		i++;
+	}
 	pipes = malloc(sizeof(*pipes) * (len - 1));
 	if (!pipes)
 	{
-		free(commands);
+		hdoc_cleanup(specs, len);
+		free_specs(specs, len);
+		free(stages);
 		return (1);
 	}
 	if(!make_pipes(pipes, len))
 	{
 		free(pipes);
-		free(commands);
+		hdoc_cleanup(specs, len);
+		free_specs(specs, len);
+		free(stages);
 		return (1);
 	}
 	pids = malloc(sizeof(pid_t) * len);
@@ -219,7 +252,9 @@ int	exec_pipeline(t_ast *root, t_ms *ms)
 	{
 		close_pipes(pipes, len);
 		free(pipes);
-		free(commands);
+		hdoc_cleanup(specs, len);
+		free_specs(specs, len);
+		free(stages);
 		return (1);
 	}
 	i = 0;
@@ -231,20 +266,24 @@ int	exec_pipeline(t_ast *root, t_ms *ms)
 			ms_perror("minishell", "fork");
 			close_pipes(pipes, len);
 			free(pipes);
-			free(commands);
+			hdoc_cleanup(specs, len);
+			free_specs(specs, len);
+			free(stages);
 			free(pids);
 			return (1);
 		}
 		else if (pids[i] == 0)		//child
 		{
-			exec_child(commands[i], ms, i, len, pipes);
+			exec_child(i, len, pipes, &specs[i], ms);
 		}
 		i++;
 	}
 	close_pipes(pipes, len);
 	rc = wait_pipeline(pids, len);
 	free(pipes);
+	hdoc_cleanup(specs, len);
 	free(pids);
-	free(commands);
+	free_specs(specs, len);
+	free(stages);
 	return (rc);
 }

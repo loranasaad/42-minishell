@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 17:17:31 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/17 16:41:13 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/20 17:12:28 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,8 @@ int	status_to_rc(int st);
 void exec_error(const char *cmd);
 int	is_stateful(const char *name);
 int	is_builtin(const char *name);
+
+int	hdoc_prepare(t_redir *redirs, t_ms *ms);
+
 
 #endif
