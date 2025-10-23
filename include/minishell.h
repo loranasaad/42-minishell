@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 
 #include "parser.h"
 
@@ -31,6 +33,7 @@ typedef struct s_env
 {
 	char			*key;
 	char			*value;
+	int				has_value; // new thing for export and env !!!
 	struct	s_env	*next;
 }					t_env;
 
@@ -87,10 +90,6 @@ t_redir	*build_tredir(t_token *tok, t_ms *ms);
 void	free_cmdspec(t_cmdspec *spec);
 char	**strv_push(char **v, const char *s);
 
-// builtin
-int		builtin_dispatch(char **argv, t_ms *ms);
-
-
 // ft_lib
 int		ft_atoi(const char *str);
 char	*ft_itoa(int n);
@@ -106,12 +105,26 @@ char	**ft_split(char const *s, char c);
 // env
 char	*find_in_path(const char *name, t_env *env);
 
+// builtin
+void	builtin_dispatch(char **argv, t_ms *ms, int *rc, int print);
+int		builtin_echo(char **argv);
+int		builtin_pwd(char **argv);
+int		builtin_cd(char **argv, t_ms *ms);
+int		builtin_env( char **argv, t_ms *ms);
+int		builtin_unset(char **argv, t_ms *ms);
+int		builtin_exit(char **argv, t_ms *ms, int in_parent);
+int		builtin_export(char **argv, t_ms *ms);
+// export helpers
+int		export_print_env(t_ms *ms);
+int		env_set_export(t_env **env, char *key, char *value, int has_value);
+int		is_key_valid(char *key);
+
 // var expansion
 char	*handle_var_expansion(char *str, int quoted, t_ms *ms, int *status);
 char	*get_next_segment(char *str, int *i, t_ms *ms, int *end);
 char	*expand_dollar_sign(char *str, t_ms *ms);
 int		several_fields(int quoted, char	*val);
-int	field_split(char *val, t_cmdspec *out);
-
+int		field_split(char *val, t_cmdspec *out);
+char	*expand_tilde(char *str, int quoted, t_ms *ms);
 
 #endif
