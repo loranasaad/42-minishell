@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 23:30:53 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/23 23:45:50 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/23 17:02:25 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	exec_run_node(t_ast *node, t_ms *ms)
 	{
 		spec.argv = NULL;
 		spec.redirs = NULL;
-		if (!build_cmdspec_from_segment(node->start, node->end, &spec))
+		if (!build_cmdspec_from_segment(node->start, node->end, &spec, ms))
 			return (2);
 		ms->last_status = exec_one_cmd(&spec, ms);
 		free_cmdspec(&spec);

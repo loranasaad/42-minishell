@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 16:45:44 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/22 22:09:02 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/23 14:50:31 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ static	void	init_sig(struct sigaction *oldi, struct sigaction *oldq)
 	sigaction(SIGINT, NULL, oldi);
 	sigaction(SIGQUIT, NULL, oldq);
 
-	//default int handler
 	sa.sa_handler = hdoc_sigint_handler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
@@ -47,7 +46,7 @@ static	void	init_sig(struct sigaction *oldi, struct sigaction *oldq)
 	sigaction(SIGQUIT, &sa, NULL);
 }
 
-static	void	hdoc_close_list(t_redir *r)
+static	void	hdoc_cleanup(t_redir *r)
 {	
 	t_redir *current;
 	
@@ -96,8 +95,11 @@ static	int	hdoc_fill(int wfd, char *limiter, int expand, t_ms *ms)
 		if (!line)
 		{
 			if (g_signal == SIGINT)
+			{	
 				ms->last_status = 130;
-			return (0);
+				return (0);
+			}
+			return (1);
 		}
 		if (ft_strcmp(line, limiter) == 0)
 		{
@@ -137,6 +139,7 @@ int	hdoc_prepare(t_redir *redirs, t_ms *ms)
 	t_redir				*current;
 	
 	init_sig(&oldi, &oldq);
+	g_signal = 0;
 	current = redirs;
 	while (current)
 	{
@@ -146,13 +149,14 @@ int	hdoc_prepare(t_redir *redirs, t_ms *ms)
 			{
 				if (ms->last_status == 0)	//keep status 130 if interrupt
 					ms->last_status = 1;
-				hdoc_close_list(redirs);
+				hdoc_cleanup(redirs);
 				restore_sig(&oldi, &oldq);
 				return (0);
 			}
 		}
 		current = current->next;
 	}
+	g_signal = 0;
 	restore_sig(&oldi, &oldq);
 	return (1);
 }

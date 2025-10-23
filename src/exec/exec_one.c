@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:26:43 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/20 17:17:19 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/23 15:35:59 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static	int	exec_stateful(t_cmdspec *spec, t_ms *ms)
 	return (rc);
 }
 
-int	exec_one_cmd(const t_cmdspec *spec, t_ms *ms)
+int	exec_one_cmd(t_cmdspec *spec, t_ms *ms)
 {
 	pid_t	pid;
 	int		status;
@@ -72,20 +72,27 @@ int	exec_one_cmd(const t_cmdspec *spec, t_ms *ms)
 	char	*full_path;
 	int		rc;
 
-	rc = 0;
 	if ((!spec->argv || !spec->argv[0]) && !spec->redirs)
 		return (0);
+	if (!hdoc_prepare(spec->redirs, ms))		//hdoc preparation
+	{
+		if (ms->last_status != 0)
+			rc = ms->last_status;
+		else
+			rc = 1;
+		return (rc);
+	}
 	if (spec->argv && spec->argv[0] && is_stateful(spec->argv[0]))
 	{
 		rc = exec_stateful(spec, ms);
+		hdoc_cleanup(spec->redirs);
 		return (rc);
 	}
-	if (!hdoc_prepare(spec->redirs, ms))		//hdoc preparation
-		return (1);
 	pid = fork();
 	if (pid < 0)
 	{
 		ms_perror("minishell", "fork");
+		hdoc_cleanup(spec->redirs);
 		return (1);
 	}	
 	if (pid == 0)	//child
@@ -113,34 +120,36 @@ int	exec_one_cmd(const t_cmdspec *spec, t_ms *ms)
 			execve(spec->argv[0], spec->argv, envp);
 			if (errno == ENOENT)
 			{
-				free_str_arr(envp);
+				free_str_arr(&envp);
 				exit(127);
 			}
-			free_str_arr(envp);
+			free_str_arr(&envp);
 			exit(126);
 		}
 		full_path = find_in_path(spec->argv[0], ms->env);
 		if (!full_path)
 		{
 			exec_error(spec->argv[0]);
-			free_str_arr(envp);
+			free_str_arr(&envp);
 			exit(127);
 		}
 		execve(full_path, spec->argv, envp);
 		if (errno == ENOENT)
 		{
 			free(full_path);
-			free_str_arr(envp);
+			free_str_arr(&envp);
 			exit(127);
 		}
 		free(full_path);
-		free_str_arr(envp);
+		free_str_arr(&envp);
 		exit(126);		
 	}	
 	if (waitpid(pid, &status, 0) < 0)
 	{
 		ms_perror("minishell", "waitpid");
+		hdoc_cleanup(spec->redirs);
 		return (1);
 	}
+	hdoc_cleanup(spec->redirs);
 	return (status_to_rc(status));
 }

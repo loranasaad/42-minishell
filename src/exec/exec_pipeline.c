@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:00:47 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/20 23:39:39 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/23 18:13:31 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,17 @@
 #include <string.h>
 #include <sys/wait.h>
 
+static	void	hdoc_cleanup_specs(t_cmdspec *s, int len)
+{
+	int	i;
+
+	i = 0;
+	while (i < len)
+	{
+		hdoc_cleanup(s[i].redirs);
+		i++;
+	}
+}
 
 static	void	free_specs(t_cmdspec *specs, int len)
 {	
@@ -82,7 +93,7 @@ static	int	count_pipeline(t_ast *root)
 	return (count);
 }
 
-void	flatten_pipeline(t_ast *root, t_ast **commands, int	length)
+static	void	flatten_pipeline(t_ast *root, t_ast **commands, int	length)
 {
 	int		i;
 	t_ast	*current;
@@ -103,7 +114,7 @@ static	int	wait_pipeline(pid_t *pids, int len)
 	int	status;
 	int	rc;
 	
-	rc = 1;
+	rc = 0;
 	i = 0;
 	while (i < len)
 	{
@@ -209,7 +220,7 @@ int	exec_pipeline(t_ast *root, t_ms *ms)
 	{
 		specs[i].argv = NULL;
 		specs[i].redirs = NULL;
-		if (!build_cmdspec_from_segment(stages[i]->start, stages[i]->end, &specs[i]))
+		if (!build_cmdspec_from_segment(stages[i]->start, stages[i]->end, &specs[i], ms))
 		{
 			free_specs(specs, i);
 			free(stages);
@@ -222,7 +233,7 @@ int	exec_pipeline(t_ast *root, t_ms *ms)
 	{
 		if (!hdoc_prepare(specs[i].redirs, ms))		//hdoc preparation
 		{
-			hdoc_cleanup(specs, len);
+			hdoc_cleanup_specs(specs, len);
 			free_specs(specs, len);
 			free(stages);
 			if (ms->last_status)
@@ -234,7 +245,7 @@ int	exec_pipeline(t_ast *root, t_ms *ms)
 	pipes = malloc(sizeof(*pipes) * (len - 1));
 	if (!pipes)
 	{
-		hdoc_cleanup(specs, len);
+		hdoc_cleanup_specs(specs, len);
 		free_specs(specs, len);
 		free(stages);
 		return (1);
@@ -242,7 +253,7 @@ int	exec_pipeline(t_ast *root, t_ms *ms)
 	if(!make_pipes(pipes, len))
 	{
 		free(pipes);
-		hdoc_cleanup(specs, len);
+		hdoc_cleanup_specs(specs, len);
 		free_specs(specs, len);
 		free(stages);
 		return (1);
@@ -252,7 +263,7 @@ int	exec_pipeline(t_ast *root, t_ms *ms)
 	{
 		close_pipes(pipes, len);
 		free(pipes);
-		hdoc_cleanup(specs, len);
+		hdoc_cleanup_specs(specs, len);
 		free_specs(specs, len);
 		free(stages);
 		return (1);
@@ -266,7 +277,7 @@ int	exec_pipeline(t_ast *root, t_ms *ms)
 			ms_perror("minishell", "fork");
 			close_pipes(pipes, len);
 			free(pipes);
-			hdoc_cleanup(specs, len);
+			hdoc_cleanup_specs(specs, len);
 			free_specs(specs, len);
 			free(stages);
 			free(pids);
@@ -281,7 +292,7 @@ int	exec_pipeline(t_ast *root, t_ms *ms)
 	close_pipes(pipes, len);
 	rc = wait_pipeline(pids, len);
 	free(pipes);
-	hdoc_cleanup(specs, len);
+	hdoc_cleanup_specs(specs, len);
 	free(pids);
 	free_specs(specs, len);
 	free(stages);

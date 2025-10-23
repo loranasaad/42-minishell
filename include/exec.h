@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 17:17:31 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/20 17:12:28 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/23 15:23:54 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 # include "minishell.h"
 # include "parser.h"
 
-int	apply_redirs(const t_redir *rlist);
-int	exec_one_cmd(const t_cmdspec *spec, t_ms *ms);
+int	apply_redirs(t_redir *rlist);
+int	exec_one_cmd(t_cmdspec *spec, t_ms *ms);
 
 int	exec_run_node(t_ast *node, t_ms *ms);
 int	exec_pipeline(t_ast *root, t_ms *ms);
@@ -29,5 +29,6 @@ int	is_builtin(const char *name);
 
 int	hdoc_prepare(t_redir *redirs, t_ms *ms);
 
+void	hdoc_cleanup(t_redir *r);
 
 #endif
