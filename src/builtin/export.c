@@ -6,82 +6,80 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 15:12:26 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/20 17:41:49 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/22 22:50:07 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// should print in alphabetical order
+static int	get_key_value(char *arg, int *has_v, char **key, char **value);
+static int	get_key_value_helper(char *arg, int *has_v, char **key,
+				char **value);
+static void	handle_invalid_key(char *key, char *value, int *status);
 
-static int	is_key_valid(char *key);
 int	builtin_export(char **argv, t_ms *ms)
 {
-	t_env	*w;
-	char	**key_value;
+	char	*key;
+	char	*value;
 	int		i;
 	int		status;
+	int		has_value;
 
 	status = 0;
 	if (argv[0] && !argv[1])
+		return (export_print_env(ms));
+	i = 1;
+	while (argv[i])
 	{
-		w = ms->env;
-		while (w)
-		{
-			if (w->key && w->value) // everything or not ?
-				printf("declare -x %s=\"%s\"\n", w->key, w->value);
-			w = w->next;
-		}
-		return (status);
-	}
-	else
-	{
-		i = 1;
-		while (argv[i])
-		{
-			key_value = ft_split(argv[i], '=');
-			if (!is_key_valid(key_value[0]))
-			{
-				printf("minishell: export: %s: not a valid identifier\n", argv[i]);
-				status = 1;
-				free_str_arr(&key_value);
-				i++;
-			}
-			else 
-			{
-				if (!key_value[1])
-					env_set(&ms->env, key_value[0], "", 1);
-				else
-					env_set(&ms->env, key_value[0], key_value[1], 1);
-				free_str_arr(&key_value);
-				i++;
-			}
-		}
+		if (!get_key_value(argv[i], &has_value, &key, &value))
+			return (1);
+		if (!is_key_valid(key))
+			handle_invalid_key(key, value, &status);
+		else
+			env_set_export(&ms->env, key, value, has_value);
+		i++;
 	}
 	return (status);
 }
 
-// !!!
-#include <ctype.h>
-
-static int	is_key_valid(char *key)
+static void	handle_invalid_key(char *key, char *value, int *status)
 {
-	int		i;
+	printf("minishell: export: %s: not a valid identifier\n", key);
+	free(key);
+	free(value);
+	*status = 1;
+}
+
+static int	get_key_value(char *arg, int *has_value, char **key, char **value)
+{
+	if (ft_strchr(arg, '='))
+	{
+		if (!get_key_value_helper(arg, has_value, key, value))
+			return (0);
+	}
+	else
+	{
+		*key = ft_strdup(arg);
+		*value = ft_strdup("");
+		*has_value = 0;
+	}
+	return (1);
+}
+
+static int	get_key_value_helper(char *arg, int *has_v, char **key,
+	char **value)
+{
+	int	i;
 
 	i = 0;
-	if (!key[i])
-		return (0);
-	if (key[i] != '_' && !isalpha(key[i]))
-		return (0);
-	i++;
-	while (key[i])
-	{
-		if (key[i] != '_' && !isalpha(key[i]) && !isdigit(key[i]))
-			return (0);
+	while (arg[i] && arg[i] != '=')
 		i++;
-	}
-		
-	//First char: letter or _
-	//Remaining chars: letters, digits, or _
+	*key = malloc(sizeof(char) * (i + 1));
+	if (!*key)
+		return (0);
+	ft_memcpy(*key, arg, (size_t) i);
+	(*key)[i] = '\0';
+	*value = ft_strdup(ft_strchr(arg, '=') + 1);
+	*has_v = 1;
 	return (1);
 }

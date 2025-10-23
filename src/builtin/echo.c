@@ -6,14 +6,11 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 15:09:58 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/20 15:22:30 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/22 19:03:53 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// echo '' => unitialized value somewhere
-// echo ~ => expand ~ in variable expansion
 
 static int	is_n_option(char *arg);
 
