@@ -62,7 +62,7 @@ SRCS = \
 	src/ft_lib/ft_substr.c \
 	src/ft_lib/ft_split.c \
 	src/ft_lib/ft_strcmp.c
-  
+
 OBJS = $(SRCS:.c=.o)
 
 # Detect OS to set readline include/lib paths and extra libs
@@ -70,11 +70,9 @@ UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S),Darwin)
   # macOS (Homebrew)
-  # If brew isn't installed or readline not found, hardcode /opt/homebrew path
   BREW_PREFIX := $(shell brew --prefix 2>/dev/null)
   RL_PREFIX   := $(shell brew --prefix readline 2>/dev/null)
 
-  # Fallbacks if brew --prefix returns nothing
   ifeq ($(RL_PREFIX),)
     RL_PREFIX := /opt/homebrew/opt/readline
   endif
@@ -85,8 +83,6 @@ ifeq ($(UNAME_S),Darwin)
 else
   # Linux
   LDLIBS  += -lreadline -lhistory -lncurses
-  # If your distro uses tinfo instead of ncurses, swap the previous line for:
-  # LDLIBS  += -lreadline -ltinfo
 endif
 
 all: $(NAME)
@@ -101,3 +97,17 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
+
+# ==============================
+# Valgrind Leak Test
+# ==============================
+
+SUPP_FILE = valgrind_readline.supp
+
+leaktest: $(NAME)
+	@echo "🔍 Running Valgrind leak test (readline leaks suppressed)..."
+	@valgrind --leak-check=full --show-leak-kinds=all \
+		--track-origins=yes --track-fds=yes \
+		--suppressions=$(SUPP_FILE) ./$(NAME)
+
+.PHONY: all clean fclean re leaktest
