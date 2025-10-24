@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:26:43 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/23 15:35:59 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/24 15:30:54 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static	int	exec_stateful(t_cmdspec *spec, t_ms *ms)
 		return (1);
 	}
 	rc = 0;
-	builtin_dispatch(spec->argv, ms, &rc);
+	builtin_dispatch(spec->argv, ms, &rc, 1);
 	restore_std(std_backup);
 	return (rc);
 }
@@ -105,7 +105,7 @@ int	exec_one_cmd(t_cmdspec *spec, t_ms *ms)
 			exit(0);
 		if (is_builtin(spec->argv[0]))
 		{	
-			builtin_dispatch(spec->argv, ms, &rc);
+			builtin_dispatch(spec->argv, ms, &rc, 0);
 			exit (rc);
 		}
 		envp = env_to_envp(ms->env);

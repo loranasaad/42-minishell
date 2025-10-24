@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:00:47 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/23 18:13:31 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/24 15:31:24 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 		exit(0);
 	if (is_builtin(spec->argv[0]))
 	{
-		builtin_dispatch(spec->argv, ms, &rc);
+		builtin_dispatch(spec->argv, ms, &rc, 0);
 		exit (rc);
 	}
 	envp = env_to_envp(ms->env);
