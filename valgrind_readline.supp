@@ -1,24 +1,12 @@
 {
-  ignore_readline_definite
-  Memcheck:Leak
-  match-leak-kinds: definite,possible,indirect,reachable
-  obj:*/libreadline.so*
+    leak readline
+    Memcheck:Leak
+    ...
+    fun:readline
 }
 {
-  ignore_history
-  Memcheck:Leak
-  match-leak-kinds: definite,possible,indirect,reachable
-  obj:*/libhistory.so*
-}
-{
-  ignore_ncurses_tinfo
-  Memcheck:Leak
-  match-leak-kinds: definite,possible,indirect,reachable
-  obj:*/libncurses*.so*
-}
-{
-  ignore_tinfo_alt
-  Memcheck:Leak
-  match-leak-kinds: definite,possible,indirect,reachable
-  obj:*/libtinfo*.so*
+    leak add_history
+    Memcheck:Leak
+    ...
+    fun:add_history
 }

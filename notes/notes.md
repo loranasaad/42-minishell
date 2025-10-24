@@ -32,6 +32,14 @@ to do later
 ==34704==  Address 0x1ffeffff78 is on thread 1's stack
 ==34704==  in frame #0, created by __libc_sigaction (libc_sigaction.c:43)
 
+8) memory leaks
 
+9) norm
+
+10) file name change
+
+11) tidy up h files
+
+12) tester last time
 
 
