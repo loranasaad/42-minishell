@@ -1,14 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/22 16:21:44 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/09 14:51:25 by latabagl         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+
 
 #ifndef PARSER_H
 # define PARSER_H
@@ -50,6 +40,8 @@ typedef struct s_redir
 {
 	t_rkind			kind;
 	char 			*target;
+	int				hdoc_exp;
+	int				hdoc_fd;
 	struct	s_redir	*next;
 }					t_redir;
 
@@ -58,6 +50,7 @@ typedef	struct	s_cmdspec
 	char	**argv;
 	t_redir	*redirs;
 }			t_cmdspec;
+
 
 void	free_cmdspec(t_cmdspec *spec);
 

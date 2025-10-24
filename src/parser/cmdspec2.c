@@ -1,14 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   cmdspec2.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/23 12:55:04 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/13 18:52:34 by latabagl         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+
 
 #include "minishell.h"
 #include "parser.h"
@@ -35,6 +25,8 @@ static void	free_redirs(t_redir **redirs)
 	{
 		destroy = w;
 		w = w->next;
+		if (destroy->kind == R_HDOC && destroy->hdoc_fd >= 0)	//Loran: added safety closes heredoc fd if still open
+			close(destroy->hdoc_fd);
 		free(destroy->target);
 		free(destroy);
 	}
@@ -65,6 +57,36 @@ t_redir	*build_tredir(t_token *tok, t_ms *ms)
 		free(redir);
 		return (NULL);
 	}
+	redir->hdoc_exp = -1;
+	redir->hdoc_fd = -1;
+	redir->next = NULL;
+	return (redir);
+}
+
+t_redir	*build_heredoc(t_token *tok)
+{
+	t_redir	*redir;
+
+	if (!tok || !tok->next || !tok->next->val)
+		return (NULL);
+	redir = malloc(sizeof(t_redir));
+	if (!redir)
+		return (NULL);
+	redir->kind = R_HDOC;
+	redir->hdoc_fd = -1;
+	redir->target = ft_strdup(tok->next->val);
+	if (!redir->target)		//Loran: added for safety
+	{
+		if (multiple)
+			redir_several_fields_error(tok->next->val);
+		free(redir->target);
+		free(redir);
+		return (NULL);
+	}
+	if (tok->next->quoted == 0)
+		redir->hdoc_exp = 1;
+	else
+		redir->hdoc_exp = 0;
 	redir->next = NULL;
 	return (redir);
 }

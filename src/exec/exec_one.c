@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:26:43 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/23 22:20:01 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/23 15:35:59 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,44 +18,84 @@
 #include <string.h>
 #include <sys/wait.h>
 
-static	void exec_error(const char *cmd)
+static	int	save_std(int std_backup[2])
 {
-	const	char	*s1;
-	const	char	*s2;
-
-	s1 = "minishell: ";
-	s2 = ": command not found\n";
-
-	write(2, s1, ft_strlen(s1));
-	write(2, cmd, ft_strlen(cmd));
-	write(2, s2, ft_strlen(s2));
-}
-
-static int	status_to_rc(int st)
-{
-	if (WIFEXITED(st))
-		return (WEXITSTATUS(st));
-	if (WIFSIGNALED(st))
-		return (128 + WTERMSIG(st));
+	std_backup[0] = dup(STDIN_FILENO);
+	if (std_backup[0] < 0)
+		return (0);
+	std_backup[1] = dup(STDOUT_FILENO);
+	if (std_backup[1] < 0)
+	{
+		close(std_backup[0]);
+		return (0);
+	}
 	return (1);
 }
 
-int	exec_one_cmd(const t_cmdspec *spec, t_ms *ms)
+static	void	restore_std(int std_backup[2])
+{
+	if (std_backup[0] >= 0)
+	{
+		dup2(std_backup[0], STDIN_FILENO);
+		close(std_backup[0]);
+	}
+	if (std_backup[1] >= 0)
+	{
+		dup2(std_backup[1], STDOUT_FILENO);
+		close(std_backup[1]);
+	}
+}
+
+static	int	exec_stateful(t_cmdspec *spec, t_ms *ms)
+{
+	int	std_backup[2];
+	int	rc;
+
+	if (!save_std(std_backup))
+		return (1);
+	if (!apply_redirs(spec->redirs))
+	{
+		restore_std(std_backup);
+		return (1);
+	}
+	rc = 0;
+	builtin_dispatch(spec->argv, ms, &rc);
+	restore_std(std_backup);
+	return (rc);
+}
+
+int	exec_one_cmd(t_cmdspec *spec, t_ms *ms)
 {
 	pid_t	pid;
 	int		status;
 	char	**envp;
 	char	*full_path;
+	int		rc;
 
 	if ((!spec->argv || !spec->argv[0]) && !spec->redirs)
 		return (0);
+	if (!hdoc_prepare(spec->redirs, ms))		//hdoc preparation
+	{
+		if (ms->last_status != 0)
+			rc = ms->last_status;
+		else
+			rc = 1;
+		return (rc);
+	}
+	if (spec->argv && spec->argv[0] && is_stateful(spec->argv[0]))
+	{
+		rc = exec_stateful(spec, ms);
+		hdoc_cleanup(spec->redirs);
+		return (rc);
+	}
 	pid = fork();
 	if (pid < 0)
 	{
 		ms_perror("minishell", "fork");
+		hdoc_cleanup(spec->redirs);
 		return (1);
 	}	
-	if (pid == 0)
+	if (pid == 0)	//child
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
@@ -63,7 +103,11 @@ int	exec_one_cmd(const t_cmdspec *spec, t_ms *ms)
 			exit(1);
 		if(!spec->argv || !spec->argv[0])		//filter the pure redirections 
 			exit(0);
-		//if built in skip for now
+		if (is_builtin(spec->argv[0]))
+		{	
+			builtin_dispatch(spec->argv, ms, &rc);
+			exit (rc);
+		}
 		envp = env_to_envp(ms->env);
 		if (!envp)
 		{
@@ -75,24 +119,37 @@ int	exec_one_cmd(const t_cmdspec *spec, t_ms *ms)
 		{
 			execve(spec->argv[0], spec->argv, envp);
 			if (errno == ENOENT)
+			{
+				free_str_arr(&envp);
 				exit(127);
-			exit(126);			
+			}
+			free_str_arr(&envp);
+			exit(126);
 		}
 		full_path = find_in_path(spec->argv[0], ms->env);
 		if (!full_path)
 		{
 			exec_error(spec->argv[0]);
+			free_str_arr(&envp);
 			exit(127);
 		}
 		execve(full_path, spec->argv, envp);
 		if (errno == ENOENT)
+		{
+			free(full_path);
+			free_str_arr(&envp);
 			exit(127);
+		}
+		free(full_path);
+		free_str_arr(&envp);
 		exit(126);		
 	}	
 	if (waitpid(pid, &status, 0) < 0)
 	{
 		ms_perror("minishell", "waitpid");
+		hdoc_cleanup(spec->redirs);
 		return (1);
 	}
+	hdoc_cleanup(spec->redirs);
 	return (status_to_rc(status));
 }

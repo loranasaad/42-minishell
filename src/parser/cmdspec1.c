@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   cmdspec1.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/22 17:44:52 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/13 18:51:25 by latabagl         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "minishell.h"
 #include "parser.h"
@@ -77,7 +66,10 @@ static int	handle_redir(t_cmdspec *out, t_token *tok, t_ms *ms)
 {
 	t_redir	*redir;
 
-	redir = build_tredir(tok, ms);
+	if (tok->kind == TK_HDOC)
+		redir = build_heredoc(tok);
+	else
+		redir = build_tredir(tok, ms);
 	if (!redir)
 	{
 		free_cmdspec(out);
