@@ -1,14 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   cmdspec2.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/23 12:55:04 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/21 18:13:05 by loasaad          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+
 
 #include "minishell.h"
 #include "parser.h"
@@ -87,6 +77,9 @@ t_redir	*build_heredoc(t_token *tok)
 	redir->target = ft_strdup(tok->next->val);
 	if (!redir->target)		//Loran: added for safety
 	{
+		if (multiple)
+			redir_several_fields_error(tok->next->val);
+		free(redir->target);
 		free(redir);
 		return (NULL);
 	}

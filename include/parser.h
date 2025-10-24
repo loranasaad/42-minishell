@@ -1,14 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/22 16:21:44 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/23 17:02:12 by loasaad          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+
 
 #ifndef PARSER_H
 # define PARSER_H
@@ -62,7 +52,6 @@ typedef	struct	s_cmdspec
 }			t_cmdspec;
 
 
-int		spec_from_segment(t_token *start, t_token *end, t_cmdspec *out);
 void	free_cmdspec(t_cmdspec *spec);
 
 t_ast	*parse_line(t_token *toks, int *status);

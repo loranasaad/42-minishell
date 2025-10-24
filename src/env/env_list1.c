@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:17:24 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/23 18:03:59 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/22 17:20:47 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ int	add_env_var(t_env **env, char *key, char *value)
 	}
 	var->key = key;
 	var->value = value;
+	var->has_value = 1;
 	var->next = NULL;
 	if (!*env)
 		*env = var;

@@ -19,13 +19,36 @@ SRCS = \
 	src/parser/validate.c \
 	src/parser/ast_free.c \
 	src/parser/parser_build.c \
+	src/parser/cmdspec1.c \
+	src/parser/cmdspec2.c \
+	src/parser/cmdspec3.c \
+	src/parser/var_expansion.c \
+	src/parser/var_expansion2.c \
+	src/parser/field_split.c \
+	src/parser/tilde_expansion.c \
 	\
 	src/env/env_list1.c \
 	src/env/env_list2.c \
 	src/env/env_list3.c \
+	src/env/env_utils.c \
+	src/env/path.c \
 	\
 	src/exec/exec_one.c \
 	src/exec/redir.c \
+	src/exec/exec_node.c \
+	src/exec/exec_pipeline.c \
+	src/exec/exec_utils.c \
+	\
+	src/builtin/builtin_dispatch.c \
+	src/builtin/cd.c \
+	src/builtin/echo.c \
+	src/builtin/env.c \
+	src/builtin/exit.c \
+	src/builtin/export.c \
+	src/builtin/export_helper.c \
+	src/builtin/export_print.c \
+	src/builtin/pwd.c \
+	src/builtin/unset.c \
 	\
 	src/ft_lib/ft_atoi.c \
 	src/ft_lib/ft_itoa.c \
@@ -35,6 +58,7 @@ SRCS = \
 	src/ft_lib/ft_strjoin.c \
 	src/ft_lib/ft_strlen.c \
 	src/ft_lib/ft_substr.c \
+	src/ft_lib/ft_split.c \
 	src/ft_lib/ft_strcmp.c
   
 OBJS = $(SRCS:.c=.o)

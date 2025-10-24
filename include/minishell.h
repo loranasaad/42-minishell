@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 
 #include "parser.h"
 
@@ -31,6 +33,7 @@ typedef struct s_env
 {
 	char			*key;
 	char			*value;
+	int				has_value; // new thing for export and env !!!
 	struct	s_env	*next;
 }					t_env;
 
@@ -40,6 +43,8 @@ typedef struct s_ms
 	int		last_status;
 	int		interactive;
 }			t_ms;
+
+#define IFS " \t\n"
 
 extern	int	g_signal;
 
