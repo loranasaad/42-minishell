@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   var_expansion.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/24 13:10:59 by loasaad           #+#    #+#             */
+/*   Updated: 2025/10/24 13:31:37 by loasaad          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 #include "parser.h"
@@ -22,7 +33,7 @@ char	*handle_var_expansion(char *str, int quoted, t_ms *ms, int *status)
 	}
 	if (quoted == 0 || quoted == 2)
 		result = expand_dollar_sign(tilde_expanded, ms);
-	else if (quoted == 1)
+	else	//quited == 1
 		result = ft_strdup(tilde_expanded);
 	free(tilde_expanded);
 	if (!result)

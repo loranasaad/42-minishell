@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 16:45:44 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/23 14:50:31 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/24 13:40:23 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,22 +44,6 @@ static	void	init_sig(struct sigaction *oldi, struct sigaction *oldq)
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	sigaction(SIGQUIT, &sa, NULL);
-}
-
-static	void	hdoc_cleanup(t_redir *r)
-{	
-	t_redir *current;
-	
-	current = r;
-	while (current)
-	{
-		if (current->kind == R_HDOC && current->hdoc_fd >= 0)
-		{
-			close(current->hdoc_fd);
-			current->hdoc_fd = -1;
-		}
-		current = current->next;
-	}
 }
 
 static	int	hdoc_write_line(int wfd, char *line, int expand, t_ms *ms)
