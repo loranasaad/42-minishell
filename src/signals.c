@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 12:45:27 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/20 13:28:30 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/26 14:52:51 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	init_prompt_signals(void)
 	sigemptyset(&sa_quit.sa_mask);
 	sa_int.sa_handler = sigint_handler;
 	sa_quit.sa_handler = sigquit_handler;
-	// sa_int.sa_flags = SA_RESTART;
+	sa_int.sa_flags = 0;				//Loran : to try for leaks
 	sa_quit.sa_flags = SA_RESTART;
 	sigaction(SIGINT, &sa_int, NULL);
 	sigaction(SIGQUIT, &sa_quit, NULL);

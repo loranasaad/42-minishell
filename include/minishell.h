@@ -42,7 +42,15 @@ typedef struct s_ms
 	t_env	*env;
 	int		last_status;
 	int		interactive;
+	int		exit_requested;	//leak
 }			t_ms;
+
+typedef	struct s_cu		//leak cleanup
+{
+	t_ast		*ast;
+	t_token		*toks;
+	t_cmdspec	*spec;
+}				t_cu;
 
 #define IFS " \t\n"
 

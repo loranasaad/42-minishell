@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:00:47 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/24 15:31:24 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/26 16:38:15 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ static	int	wait_pipeline(pid_t *pids, int len)
 	return (rc);
 }
 
-static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *ms)
+static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *ms, t_cu *cleanup)
 {
 	char	**envp;
 	char	*full_path;
@@ -140,27 +140,37 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 	if (i > 0 && dup2(pipes[i - 1][0], STDIN_FILENO) < 0)	//apply and handle error with dup2
 	{
 		ms_perror("minishell", "dup2");
+		child_cleanup_all(ms, cleanup);
 		exit (1);
 	}
 	if (i < len - 1 && dup2(pipes[i][1], STDOUT_FILENO) < 0)
 	{
 		ms_perror("minishell", "dup2");
+		child_cleanup_all(ms, cleanup);
 		exit (1);
 	}
 	close_pipes(pipes, len);
 	if (!apply_redirs(spec->redirs))
+	{
+		child_cleanup_all(ms, cleanup);
 		exit (1);
+	}
 	if(!spec->argv || !spec->argv[0])		//filter the pure redirections 
-		exit(0);
+	{
+		child_cleanup_all(ms, cleanup);
+		exit (0);
+	}
 	if (is_builtin(spec->argv[0]))
 	{
 		builtin_dispatch(spec->argv, ms, &rc, 0);
+		child_cleanup_all(ms, cleanup);
 		exit (rc);
 	}
 	envp = env_to_envp(ms->env);
 	if (!envp)
 	{
 		ms_perror("minishell", "env");
+		child_cleanup_all(ms, cleanup);
 		exit(1);
 	}
 		//if it has a direct path
@@ -170,9 +180,11 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 		if (errno == ENOENT)
 		{
 			free_str_arr(&envp);
+			child_cleanup_all(ms, cleanup);
 			exit(127);
 		}
 		free_str_arr(&envp);
+		child_cleanup_all(ms, cleanup);
 		exit(126);			
 	}
 	full_path = find_in_path(spec->argv[0], ms->env);
@@ -180,6 +192,7 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 	{
 		exec_error(spec->argv[0]);
 		free_str_arr(&envp);
+		child_cleanup_all(ms, cleanup);
 		exit(127);
 	}
 	execve(full_path, spec->argv, envp);
@@ -187,14 +200,16 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 	{
 		free(full_path);
 		free_str_arr(&envp);
+		child_cleanup_all(ms, cleanup);
 		exit(127);
 	}
 	free(full_path);
 	free_str_arr(&envp);
+	child_cleanup_all(ms, cleanup);
 	exit(126);		
 }
 
-int	exec_pipeline(t_ast *root, t_ms *ms)
+int	exec_pipeline(t_ast *root, t_ms *ms, t_cu *cleanup)
 {
 	t_ast		**stages;
 	int			len;
@@ -285,7 +300,8 @@ int	exec_pipeline(t_ast *root, t_ms *ms)
 		}
 		else if (pids[i] == 0)		//child
 		{
-			exec_child(i, len, pipes, &specs[i], ms);
+			cleanup->spec = &specs[i];
+			exec_child(i, len, pipes, &specs[i], ms, cleanup);
 		}
 		i++;
 	}

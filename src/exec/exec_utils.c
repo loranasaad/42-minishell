@@ -6,14 +6,23 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 13:48:14 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/17 16:40:34 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/26 16:31:01 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <string.h>
 #include <sys/wait.h>
 #include "exec.h"
-
+void	child_cleanup_all(t_ms *ms, t_cu *cleanup)
+{
+	if (cleanup->spec)
+		free_cmdspec(cleanup->spec);
+	if (cleanup->ast)
+		ast_free(cleanup->ast);
+	if (cleanup->toks)
+		free_tokens(cleanup->toks);
+	env_free(&(ms->env));
+}
 int	is_builtin(const char *name)
 {
 	if (!name)

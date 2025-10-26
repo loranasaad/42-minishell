@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:26:43 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/24 15:30:54 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/26 16:33:56 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,11 @@ static	int	exec_stateful(t_cmdspec *spec, t_ms *ms)
 	int	std_backup[2];
 	int	rc;
 
+	if (spec->argv && spec->argv[0] && ft_strcmp(spec->argv[0], "exit") == 0)	//Loran: leaks . this is for exit only
+	{
+		builtin_dispatch(spec->argv, ms, &rc, 1);
+		return (rc);
+	}
 	if (!save_std(std_backup))
 		return (1);
 	if (!apply_redirs(spec->redirs))
@@ -64,7 +69,7 @@ static	int	exec_stateful(t_cmdspec *spec, t_ms *ms)
 	return (rc);
 }
 
-int	exec_one_cmd(t_cmdspec *spec, t_ms *ms)
+int	exec_one_cmd(t_cmdspec *spec, t_ms *ms, t_cu *cleanup)
 {
 	pid_t	pid;
 	int		status;
@@ -100,18 +105,26 @@ int	exec_one_cmd(t_cmdspec *spec, t_ms *ms)
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		if(!apply_redirs(spec->redirs))
+		{
+			child_cleanup_all(ms, cleanup);
 			exit(1);
+		}
 		if(!spec->argv || !spec->argv[0])		//filter the pure redirections 
+		{
+			child_cleanup_all(ms, cleanup);
 			exit(0);
+		}
 		if (is_builtin(spec->argv[0]))
 		{	
 			builtin_dispatch(spec->argv, ms, &rc, 0);
+			child_cleanup_all(ms, cleanup);
 			exit (rc);
 		}
 		envp = env_to_envp(ms->env);
 		if (!envp)
 		{
 			ms_perror("minishell", "env");
+			child_cleanup_all(ms, cleanup);
 			exit(1);
 		}
 		//if it has a direct path
@@ -121,9 +134,11 @@ int	exec_one_cmd(t_cmdspec *spec, t_ms *ms)
 			if (errno == ENOENT)
 			{
 				free_str_arr(&envp);
+				child_cleanup_all(ms, cleanup);
 				exit(127);
 			}
 			free_str_arr(&envp);
+			child_cleanup_all(ms, cleanup);
 			exit(126);
 		}
 		full_path = find_in_path(spec->argv[0], ms->env);
@@ -131,6 +146,7 @@ int	exec_one_cmd(t_cmdspec *spec, t_ms *ms)
 		{
 			exec_error(spec->argv[0]);
 			free_str_arr(&envp);
+			child_cleanup_all(ms, cleanup);
 			exit(127);
 		}
 		execve(full_path, spec->argv, envp);
@@ -138,11 +154,13 @@ int	exec_one_cmd(t_cmdspec *spec, t_ms *ms)
 		{
 			free(full_path);
 			free_str_arr(&envp);
+			child_cleanup_all(ms, cleanup);
 			exit(127);
 		}
 		free(full_path);
 		free_str_arr(&envp);
-		exit(126);		
+		child_cleanup_all(ms, cleanup);
+		exit(126);
 	}	
 	if (waitpid(pid, &status, 0) < 0)
 	{
