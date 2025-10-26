@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 15:12:22 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/26 14:51:57 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/26 18:30:58 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	builtin_exit(char **argv, t_ms *ms, int in_parent)
 	{
 		clear_history();
 		env_free(&(ms->env));
-		exit(exit_code);;
+		exit(exit_code);
 	}
 	
 }

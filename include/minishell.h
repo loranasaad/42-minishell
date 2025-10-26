@@ -50,6 +50,11 @@ typedef	struct s_cu		//leak cleanup
 	t_ast		*ast;
 	t_token		*toks;
 	t_cmdspec	*spec;
+	t_ast		**stages;
+	t_cmdspec	*specs;
+	int			(*pipes)[2];
+	pid_t		*pids;
+	int			pipe_len;
 }				t_cu;
 
 #define IFS " \t\n"

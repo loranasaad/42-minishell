@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 13:48:14 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/26 16:31:01 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/26 18:59:29 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,35 @@
 #include "exec.h"
 void	child_cleanup_all(t_ms *ms, t_cu *cleanup)
 {
+	int	i;
+	
 	if (cleanup->spec)
 		free_cmdspec(cleanup->spec);
 	if (cleanup->ast)
 		ast_free(cleanup->ast);
 	if (cleanup->toks)
 		free_tokens(cleanup->toks);
+
+	if (cleanup->specs && cleanup->pipe_len > 0)
+	{
+		i = 0;
+		while (i < cleanup->pipe_len)
+		{
+			free_cmdspec(&cleanup->specs[i]);
+			i++;
+		}
+		free(cleanup->specs);
+	}
+	if (cleanup->stages)
+		free(cleanup->stages);
+	if (cleanup->pipes)
+		free(cleanup->pipes);
+	if (cleanup->pids)
+		free(cleanup->pids);
+	
 	env_free(&(ms->env));
 }
+
 int	is_builtin(const char *name)
 {
 	if (!name)

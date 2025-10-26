@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:00:47 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/26 16:38:15 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/26 18:59:56 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -301,6 +301,11 @@ int	exec_pipeline(t_ast *root, t_ms *ms, t_cu *cleanup)
 		else if (pids[i] == 0)		//child
 		{
 			cleanup->spec = &specs[i];
+			cleanup->stages = stages;
+			cleanup->specs = specs;
+			cleanup->pipes = pipes;
+			cleanup->pids = pids;
+			cleanup->pipe_len = len;
 			exec_child(i, len, pipes, &specs[i], ms, cleanup);
 		}
 		i++;

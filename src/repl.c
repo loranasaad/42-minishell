@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 16:20:57 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/26 16:16:07 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/26 19:00:14 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,11 @@ void	repl(t_ms *ms)
 		cleanup.ast = ast;
 		cleanup.toks = toks;
 		cleanup.spec = NULL;
+		cleanup.stages = NULL;
+		cleanup.specs = NULL;
+		cleanup.pipes = NULL;
+		cleanup.pids = NULL;
+		cleanup.pipe_len = 0;
 		
 		ms->last_status = exec_run_node(ast, ms, &cleanup);
 		ast_free(ast);
