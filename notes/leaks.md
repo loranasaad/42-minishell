@@ -1,6 +1,6 @@
-cat < a | echo
-minishell> env | sort | grep -v SHLVL
-export GHOST=123 | env | grep GHOST
+1) cat < a | echo
+2) minishell> env | sort | grep -v SHLVL
+3) export GHOST=123 | env | grep GHOST
 
 
 1)
