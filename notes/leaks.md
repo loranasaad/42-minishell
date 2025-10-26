@@ -1,3 +1,8 @@
+cat < a | echo
+minishell> env | sort | grep -v SHLVL
+export GHOST=123 | env | grep GHOST
+
+
 1)
 vboxuser@Ubuntu:~/Projects/leaks$ valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all --track-origins=yes ./minishell 
 ==7983== Memcheck, a memory error detector
