@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:00:47 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/26 18:59:56 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/27 15:29:24 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,11 +118,13 @@ static	int	wait_pipeline(pid_t *pids, int len)
 	i = 0;
 	while (i < len)
 	{
-		if (waitpid(pids[i], &status, 0) > 0)
+		while (waitpid(pids[i], &status, 0) < 0)
 		{
-			if (i == len - 1)
-				rc = status_to_rc(status);
+			if (errno != EINTR)
+				break;
 		}
+		if (i == len - 1)
+			rc = status_to_rc(status);
 		i++;
 	}
 	return (rc);
@@ -311,7 +313,9 @@ int	exec_pipeline(t_ast *root, t_ms *ms, t_cu *cleanup)
 		i++;
 	}
 	close_pipes(pipes, len);
+	init_exec_signals();
 	rc = wait_pipeline(pids, len);
+	init_prompt_signals();
 	free(pipes);
 	hdoc_cleanup_specs(specs, len);
 	free(pids);

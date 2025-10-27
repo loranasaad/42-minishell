@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 16:45:44 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/24 13:40:23 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/27 17:23:47 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,10 @@ static	int	hdoc_fill(int wfd, char *limiter, int expand, t_ms *ms)
 				ms->last_status = 130;
 				return (0);
 			}
+			write(2, "minishell: warning: ", 20);
+			write(2, "here-document delimited by end-of-file (wanted '", 48);
+			write(2, limiter, ft_strlen(limiter));
+			write(2, "')\n", 3);
 			return (1);
 		}
 		if (ft_strcmp(line, limiter) == 0)

@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 12:45:27 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/27 13:17:16 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/27 16:58:02 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,28 @@
 #include <readline/history.h>
 
 int	g_signal = 0;
+
+void	sigint_exec_handler(int sig)
+{
+	(void)sig;
+	write(STDOUT_FILENO, "\n", 1);
+}
+
+void	init_exec_signals(void)
+{
+	struct	sigaction	sa_int;
+	struct	sigaction	sa_quit;
+	
+	sigemptyset(&sa_int.sa_mask);
+	sigemptyset(&sa_quit.sa_mask);
+	sa_int.sa_handler = sigint_exec_handler;
+	sa_quit.sa_handler = SIG_IGN;
+	sa_int.sa_flags = 0;
+	sa_quit.sa_flags = 0;
+	sigaction(SIGINT, &sa_int, NULL);
+	sigaction(SIGQUIT, &sa_quit, NULL);	
+}
+
 
 void	sigint_handler(int sig)
 {

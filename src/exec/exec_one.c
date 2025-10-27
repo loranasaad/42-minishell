@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:26:43 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/26 16:33:56 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/27 15:27:37 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,13 +161,18 @@ int	exec_one_cmd(t_cmdspec *spec, t_ms *ms, t_cu *cleanup)
 		free_str_arr(&envp);
 		child_cleanup_all(ms, cleanup);
 		exit(126);
-	}	
-	if (waitpid(pid, &status, 0) < 0)
-	{
-		ms_perror("minishell", "waitpid");
-		hdoc_cleanup(spec->redirs);
-		return (1);
 	}
+	init_exec_signals();
+	while (waitpid(pid, &status, 0) < 0)
+	{
+		if (errno != EINTR)
+		{
+			ms_perror("minishell", "waitpid");
+			hdoc_cleanup(spec->redirs);
+			return (1);
+		}
+	}
+	init_prompt_signals();
 	hdoc_cleanup(spec->redirs);
 	return (status_to_rc(status));
 }

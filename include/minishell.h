@@ -64,6 +64,8 @@ extern	int	g_signal;
 void	repl(t_ms *ms);
 
 void	init_prompt_signals(void);
+void	sigint_exec_handler(int sig);
+void	init_exec_signals(void);
 
 //int		termios_disable_echoctl(void);
 //void	termios_restore(void);

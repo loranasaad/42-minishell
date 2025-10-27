@@ -5,10 +5,10 @@ skip on whitespace only
 					or:	Is a directory
 in minishell it does nothing
 
-2)	when ctrl c after writing something ( no enter) history is an empty space
-it shouldn't be recorded in history
+2)	(solved) (it was not history problem but caused by readline, the first press after ctrl+c was not responsive) when ctrl c after writing something ( no enter) history is an empty space
+it shouldn't be recorded in history. 
 
-3)	Try ctrl-C after running a blocking command like cat without arguments or grep “something“.
+3) (solved)	Try ctrl-C after running a blocking command like cat without arguments or grep “something“.
 we get : waitpid: Interrupted system call
 what we should get : ^C new prompt
 
@@ -23,6 +23,6 @@ we should get: ^\ Quit (core dumped)
 
 to do later
 
-7) ctrl c should should always show ^C
+7) (fixed) ctrl c should should always show ^C 
 
-
+8) on heredoc ctrl c should quit
