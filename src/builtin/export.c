@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 15:12:26 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/22 22:50:07 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/27 23:57:12 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,16 @@ int	builtin_export(char **argv, t_ms *ms)
 
 static void	handle_invalid_key(char *key, char *value, int *status)
 {
-	printf("minishell: export: %s: not a valid identifier\n", key);
+	char	*s1;
+	char	*s2;
+	
+	s1 = "minishell: export: ";
+	s2 = ": not a valid identifier\n";
+	write(2, s1, ft_strlen(s1));
+	write(2, key, ft_strlen(key));
+	write(2, "=", 1);
+	write(2, value, ft_strlen(value));
+	write(2, s2, ft_strlen(s2));
 	free(key);
 	free(value);
 	*status = 1;
