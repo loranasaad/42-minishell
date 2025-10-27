@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_pipeline.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:00:47 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/27 15:29:24 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/27 23:36:54 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,18 +176,28 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 		exit(1);
 	}
 		//if it has a direct path
-	if (ft_strchr(spec->argv[0], '/'))
+	if (ft_strchr(spec->argv[0], '/')) // fix_laura beginn
 	{
-		execve(spec->argv[0], spec->argv, envp);
-		if (errno == ENOENT)
+		if (is_a_dir(spec->argv[0]))
 		{
+			print_dir_err_msg(spec->argv[0]);
 			free_str_arr(&envp);
 			child_cleanup_all(ms, cleanup);
-			exit(127);
+			exit (126);
 		}
+		execve(spec->argv[0], spec->argv, envp);
+		int saved_errno = errno;
+		int	exit_status = 0;
+		if (saved_errno == ENOENT)
+			exit_status = 127;
+		else if (saved_errno == EACCES)
+			exit_status = 126;
+		else
+			exit_status = 1;
+		print_general_err_msg(spec->argv[0], saved_errno);
 		free_str_arr(&envp);
 		child_cleanup_all(ms, cleanup);
-		exit(126);			
+		exit(exit_status);
 	}
 	full_path = find_in_path(spec->argv[0], ms->env);
 	if (!full_path)
@@ -198,7 +208,9 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 		exit(127);
 	}
 	execve(full_path, spec->argv, envp);
-	if (errno == ENOENT)
+	int saved_errno = errno;
+	print_general_err_msg(spec->argv[0], saved_errno);
+	if (saved_errno == ENOENT)
 	{
 		free(full_path);
 		free_str_arr(&envp);
@@ -208,7 +220,7 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 	free(full_path);
 	free_str_arr(&envp);
 	child_cleanup_all(ms, cleanup);
-	exit(126);		
+	exit(126);
 }
 
 int	exec_pipeline(t_ast *root, t_ms *ms, t_cu *cleanup)
