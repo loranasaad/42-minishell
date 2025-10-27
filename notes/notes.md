@@ -23,15 +23,6 @@ we should get: ^\ Quit (core dumped)
 
 to do later
 
-7) using valgrind we get this:
-==34704== Syscall param rt_sigaction(act->sa_flags) points to uninitialised byte(s)
-==34704==    at 0x49715F3: __libc_sigaction (libc_sigaction.c:58)
-==34704==    by 0x4015BB: init_prompt_signals (in /home/latabagl/minishell/minishell)
-==34704==    by 0x401380: repl (in /home/latabagl/minishell/minishell)
-==34704==    by 0x401350: main (in /home/latabagl/minishell/minishell)
-==34704==  Address 0x1ffeffff78 is on thread 1's stack
-==34704==  in frame #0, created by __libc_sigaction (libc_sigaction.c:43)
-
-
+7) ctrl c should should always show ^C
 
 

@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 12:45:27 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/26 14:52:51 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/27 13:17:16 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void	sigint_handler(int sig)
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
-	extern	int	rl_done;
-	rl_done = 1;
+	// extern	int	rl_done;
+	// rl_done = 1;
 }
 
 void	sigquit_handler(int sig)
