@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_pipeline.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:00:47 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/24 15:31:24 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/27 17:55:48 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
