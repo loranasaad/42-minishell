@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 12:45:27 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/27 16:58:02 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/28 11:37:42 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,13 @@
 #include <readline/history.h>
 
 int	g_signal = 0;
+
+//for child during exec
+void	sigquit_exec_handler(int sig)
+{
+	(void)sig;
+	write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
+}
 
 void	sigint_exec_handler(int sig)
 {
@@ -31,7 +38,7 @@ void	init_exec_signals(void)
 	sigemptyset(&sa_int.sa_mask);
 	sigemptyset(&sa_quit.sa_mask);
 	sa_int.sa_handler = sigint_exec_handler;
-	sa_quit.sa_handler = SIG_IGN;
+	sa_quit.sa_handler = sigquit_exec_handler;
 	sa_int.sa_flags = 0;
 	sa_quit.sa_flags = 0;
 	sigaction(SIGINT, &sa_int, NULL);

@@ -12,7 +12,7 @@ it shouldn't be recorded in history.
 we get : waitpid: Interrupted system call
 what we should get : ^C new prompt
 
-4)	Try ctrl-\ after running a blocking command like cat without arguments or grep “something“.
+4)	(solved)Try ctrl-\ after running a blocking command like cat without arguments or grep “something“.
 
 we get: new prompt
 we should get: ^\ Quit (core dumped)
