@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 17:44:52 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/21 16:08:27 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/27 23:36:03 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,28 @@ int	build_cmdspec_from_segment(t_token *start,
 			w = w->next->next;
 		}
 	}
+	handle_empty_arg(out);
 	return (1);
+}
+
+void	handle_empty_arg(t_cmdspec *out)
+{
+	int	i;
+	int	j;
+
+	if (!out || !out->argv)
+		return ;
+	i = 0;
+	j = 0;
+	while (out->argv[i] && out->argv[i][0] == '\0')
+	{
+
+		free(out->argv[i]);
+		i++;
+	}
+	while (out->argv[i])
+		out->argv[j++] = out->argv[i++];
+	out->argv[j] = NULL;
 }
 
 static int	handle_word(t_cmdspec *out, t_token *tok, t_ms *ms)

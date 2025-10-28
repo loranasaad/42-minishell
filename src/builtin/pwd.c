@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 15:10:42 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/20 15:10:57 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/27 19:30:45 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,7 @@ int	builtin_pwd(char **argv)
 {
 	char	*cwd;
 
-	if (argv[1])
-	{
-		write(2, "minishell: pwd: too many arguments\n", 35);
-		return (1);
-	}
+	(void) argv;
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 	{

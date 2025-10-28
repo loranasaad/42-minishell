@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   exec_pipeline.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:00:47 by loasaad           #+#    #+#             */
 /*   Updated: 2025/10/28 13:11:18 by loasaad          ###   ########.fr       */
@@ -198,7 +198,7 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 			ms_perror("minishell", spec->argv[0]);
 			free_str_arr(&envp);
 			child_cleanup_all(ms, cleanup);
-			exit(127);
+			exit (126);
 		}
 		else if (errno == EACCES)
 		{
@@ -210,7 +210,7 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 		ms_perror("minishell", spec->argv[0]);
 		free_str_arr(&envp);
 		child_cleanup_all(ms, cleanup);
-		exit(126);			
+		exit(exit_status);
 	}
 	full_path = find_in_path(spec->argv[0], ms->env);
 	if (!full_path)
@@ -221,7 +221,9 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 		exit(127);
 	}
 	execve(full_path, spec->argv, envp);
-	if (errno == ENOENT)
+	int saved_errno = errno;
+	print_general_err_msg(spec->argv[0], saved_errno);
+	if (saved_errno == ENOENT)
 	{
 		free(full_path);
 		free_str_arr(&envp);
@@ -231,7 +233,7 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 	free(full_path);
 	free_str_arr(&envp);
 	child_cleanup_all(ms, cleanup);
-	exit(126);		
+	exit(126);
 }
 
 int	exec_pipeline(t_ast *root, t_ms *ms, t_cu *cleanup)

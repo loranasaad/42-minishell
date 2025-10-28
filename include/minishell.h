@@ -144,4 +144,10 @@ int		several_fields(int quoted, char	*val);
 int		field_split(char *val, t_cmdspec *out);
 char	*expand_tilde(char *str, int quoted, t_ms *ms);
 
+int		is_a_dir(char *path); // new
+void	print_dir_err_msg(char *dir);
+void	print_general_err_msg(char *arg, int saved_errno);
+
+void	handle_empty_arg(t_cmdspec *out);
+
 #endif
