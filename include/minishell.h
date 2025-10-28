@@ -42,7 +42,20 @@ typedef struct s_ms
 	t_env	*env;
 	int		last_status;
 	int		interactive;
+	int		exit_requested;	//leak
 }			t_ms;
+
+typedef	struct s_cu		//leak cleanup
+{
+	t_ast		*ast;
+	t_token		*toks;
+	t_cmdspec	*spec;
+	t_ast		**stages;
+	t_cmdspec	*specs;
+	int			(*pipes)[2];
+	pid_t		*pids;
+	int			pipe_len;
+}				t_cu;
 
 #define IFS " \t\n"
 
@@ -51,6 +64,9 @@ extern	int	g_signal;
 void	repl(t_ms *ms);
 
 void	init_prompt_signals(void);
+void	sigint_exec_handler(int sig);
+void	init_exec_signals(void);
+void	sigquit_exec_handler(int sig);
 
 //int		termios_disable_echoctl(void);
 //void	termios_restore(void);

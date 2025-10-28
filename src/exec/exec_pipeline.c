@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:00:47 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/24 15:31:24 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/28 13:11:18 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 
 static	void	hdoc_cleanup_specs(t_cmdspec *s, int len)
 {
@@ -118,21 +119,24 @@ static	int	wait_pipeline(pid_t *pids, int len)
 	i = 0;
 	while (i < len)
 	{
-		if (waitpid(pids[i], &status, 0) > 0)
+		while (waitpid(pids[i], &status, 0) < 0)
 		{
-			if (i == len - 1)
-				rc = status_to_rc(status);
+			if (errno != EINTR)
+				break;
 		}
+		if (i == len - 1)
+			rc = status_to_rc(status);
 		i++;
 	}
 	return (rc);
 }
 
-static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *ms)
+static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *ms, t_cu *cleanup)
 {
-	char	**envp;
-	char	*full_path;
-	int		rc;
+	char			**envp;
+	char			*full_path;
+	int				rc;
+	struct	stat	path_stat;
 	
 	rc = 0;
 	signal(SIGINT, SIG_DFL);	//handle signals
@@ -140,39 +144,72 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 	if (i > 0 && dup2(pipes[i - 1][0], STDIN_FILENO) < 0)	//apply and handle error with dup2
 	{
 		ms_perror("minishell", "dup2");
+		child_cleanup_all(ms, cleanup);
 		exit (1);
 	}
 	if (i < len - 1 && dup2(pipes[i][1], STDOUT_FILENO) < 0)
 	{
 		ms_perror("minishell", "dup2");
+		child_cleanup_all(ms, cleanup);
 		exit (1);
 	}
 	close_pipes(pipes, len);
 	if (!apply_redirs(spec->redirs))
+	{
+		child_cleanup_all(ms, cleanup);
 		exit (1);
+	}
 	if(!spec->argv || !spec->argv[0])		//filter the pure redirections 
-		exit(0);
+	{
+		child_cleanup_all(ms, cleanup);
+		exit (0);
+	}
 	if (is_builtin(spec->argv[0]))
 	{
 		builtin_dispatch(spec->argv, ms, &rc, 0);
+		child_cleanup_all(ms, cleanup);
 		exit (rc);
 	}
 	envp = env_to_envp(ms->env);
 	if (!envp)
 	{
 		ms_perror("minishell", "env");
+		child_cleanup_all(ms, cleanup);
 		exit(1);
 	}
 		//if it has a direct path
 	if (ft_strchr(spec->argv[0], '/'))
-	{
+	{		
+		if (stat(spec->argv[0], &path_stat) == 0)
+		{
+			if (S_ISDIR(path_stat.st_mode))
+			{
+				write(2, "minishell: ", 11);
+				write(2, spec->argv[0], ft_strlen(spec->argv[0]));
+				write(2, ": Is a directory\n", 18);
+				free_str_arr(&envp);
+				child_cleanup_all(ms, cleanup);
+				exit(126);
+			}
+		}
 		execve(spec->argv[0], spec->argv, envp);
 		if (errno == ENOENT)
 		{
+			ms_perror("minishell", spec->argv[0]);
 			free_str_arr(&envp);
+			child_cleanup_all(ms, cleanup);
 			exit(127);
 		}
+		else if (errno == EACCES)
+		{
+			ms_perror("minishell", spec->argv[0]);	//no such file or directory
+			free_str_arr(&envp);
+			child_cleanup_all(ms, cleanup);
+			exit(126);
+		}
+		ms_perror("minishell", spec->argv[0]);
 		free_str_arr(&envp);
+		child_cleanup_all(ms, cleanup);
 		exit(126);			
 	}
 	full_path = find_in_path(spec->argv[0], ms->env);
@@ -180,6 +217,7 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 	{
 		exec_error(spec->argv[0]);
 		free_str_arr(&envp);
+		child_cleanup_all(ms, cleanup);
 		exit(127);
 	}
 	execve(full_path, spec->argv, envp);
@@ -187,14 +225,16 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 	{
 		free(full_path);
 		free_str_arr(&envp);
+		child_cleanup_all(ms, cleanup);
 		exit(127);
 	}
 	free(full_path);
 	free_str_arr(&envp);
+	child_cleanup_all(ms, cleanup);
 	exit(126);		
 }
 
-int	exec_pipeline(t_ast *root, t_ms *ms)
+int	exec_pipeline(t_ast *root, t_ms *ms, t_cu *cleanup)
 {
 	t_ast		**stages;
 	int			len;
@@ -285,12 +325,20 @@ int	exec_pipeline(t_ast *root, t_ms *ms)
 		}
 		else if (pids[i] == 0)		//child
 		{
-			exec_child(i, len, pipes, &specs[i], ms);
+			cleanup->spec = &specs[i];
+			cleanup->stages = stages;
+			cleanup->specs = specs;
+			cleanup->pipes = pipes;
+			cleanup->pids = pids;
+			cleanup->pipe_len = len;
+			exec_child(i, len, pipes, &specs[i], ms, cleanup);
 		}
 		i++;
 	}
 	close_pipes(pipes, len);
+	init_exec_signals();
 	rc = wait_pipeline(pids, len);
+	init_prompt_signals();
 	free(pipes);
 	hdoc_cleanup_specs(specs, len);
 	free(pids);

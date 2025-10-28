@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 16:45:44 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/24 13:40:23 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/28 12:30:44 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,21 @@
 #include <signal.h>
 #include <readline/readline.h>
 
+static	int	hdoc_event(void)
+{
+	if (g_signal == SIGINT)
+		return (1);
+	return (0);
+}
+
 static	void hdoc_sigint_handler(int sig)
 {
 	(void)sig;
 	g_signal = SIGINT;
+	rl_done = 1;
+	// write(STDOUT_FILENO, "\n", 1);
+	rl_replace_line("", 0);
+	// rl_redisplay();
 }
 
 static	void	restore_sig(struct sigaction *oldi, struct sigaction *oldq)
@@ -76,6 +87,13 @@ static	int	hdoc_fill(int wfd, char *limiter, int expand, t_ms *ms)
 	while(1)
 	{
 		line = readline("> ");
+		// if (g_signal == SIGINT)
+		// {
+		// 	if (line)
+		// 		free(line);
+		// 	ms->last_status = 130;
+		// 	return (0);
+		// }
 		if (!line)
 		{
 			if (g_signal == SIGINT)
@@ -83,7 +101,17 @@ static	int	hdoc_fill(int wfd, char *limiter, int expand, t_ms *ms)
 				ms->last_status = 130;
 				return (0);
 			}
+			write(2, "minishell: warning: ", 20);
+			write(2, "here-document delimited by end-of-file (wanted '", 48);
+			write(2, limiter, ft_strlen(limiter));
+			write(2, "')\n", 3);
 			return (1);
+		}
+		if (g_signal == SIGINT)
+		{	
+			free(line);
+			ms->last_status = 130;
+			return (0);
 		}
 		if (ft_strcmp(line, limiter) == 0)
 		{
@@ -121,7 +149,10 @@ int	hdoc_prepare(t_redir *redirs, t_ms *ms)
 	struct	sigaction	oldi;
 	struct	sigaction	oldq;
 	t_redir				*current;
+	int					(*old_event_hook)(void);
 	
+	old_event_hook = rl_event_hook;
+	rl_event_hook = hdoc_event;
 	init_sig(&oldi, &oldq);
 	g_signal = 0;
 	current = redirs;
@@ -135,6 +166,8 @@ int	hdoc_prepare(t_redir *redirs, t_ms *ms)
 					ms->last_status = 1;
 				hdoc_cleanup(redirs);
 				restore_sig(&oldi, &oldq);
+				rl_event_hook = old_event_hook;
+				g_signal = 0;
 				return (0);
 			}
 		}
@@ -142,5 +175,6 @@ int	hdoc_prepare(t_redir *redirs, t_ms *ms)
 	}
 	g_signal = 0;
 	restore_sig(&oldi, &oldq);
+	rl_event_hook = old_event_hook;
 	return (1);
 }

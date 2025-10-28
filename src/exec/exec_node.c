@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 13:09:05 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/24 13:09:08 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/26 16:16:42 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "minishell.h"
 #include "parser.h"
 
-int	exec_run_node(t_ast *node, t_ms *ms)
+int	exec_run_node(t_ast *node, t_ms *ms, t_cu *cleanup)
 {
 	t_cmdspec	spec;
 	int			rc;
@@ -27,13 +27,14 @@ int	exec_run_node(t_ast *node, t_ms *ms)
 		spec.redirs = NULL;
 		if (!build_cmdspec_from_segment(node->start, node->end, &spec, ms))
 			return (2);
-		ms->last_status = exec_one_cmd(&spec, ms);
+		cleanup->spec = &spec;
+		ms->last_status = exec_one_cmd(&spec, ms, cleanup);
 		free_cmdspec(&spec);
 		return (ms->last_status);
 	}
 	else if (node->kind == AST_PIPE)
 	{
-		rc = exec_pipeline(node, ms);
+		rc = exec_pipeline(node, ms, cleanup);
 		return (rc);
 	}
 	return (0);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 18:01:42 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/22 15:39:15 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/26 14:43:18 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)envp;
 	ms.last_status = 0;
 	ms.interactive = isatty(STDIN_FILENO);
+	ms.exit_requested = 0;
 	ms.env = env_init(envp);
 	// termios_disable_echoctl();
 	repl(&ms);

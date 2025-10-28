@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:26:43 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/24 15:30:54 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/28 13:11:13 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 
 static	int	save_std(int std_backup[2])
 {
@@ -51,6 +52,11 @@ static	int	exec_stateful(t_cmdspec *spec, t_ms *ms)
 	int	std_backup[2];
 	int	rc;
 
+	if (spec->argv && spec->argv[0] && ft_strcmp(spec->argv[0], "exit") == 0)	//Loran: leaks . this is for exit only
+	{
+		builtin_dispatch(spec->argv, ms, &rc, 1);
+		return (rc);
+	}
 	if (!save_std(std_backup))
 		return (1);
 	if (!apply_redirs(spec->redirs))
@@ -64,13 +70,14 @@ static	int	exec_stateful(t_cmdspec *spec, t_ms *ms)
 	return (rc);
 }
 
-int	exec_one_cmd(t_cmdspec *spec, t_ms *ms)
+int	exec_one_cmd(t_cmdspec *spec, t_ms *ms, t_cu *cleanup)
 {
-	pid_t	pid;
-	int		status;
-	char	**envp;
-	char	*full_path;
-	int		rc;
+	pid_t			pid;
+	int				status;
+	char			**envp;
+	char			*full_path;
+	int				rc;
+	struct	stat	path_stat;
 
 	if ((!spec->argv || !spec->argv[0]) && !spec->redirs)
 		return (0);
@@ -100,30 +107,62 @@ int	exec_one_cmd(t_cmdspec *spec, t_ms *ms)
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		if(!apply_redirs(spec->redirs))
+		{
+			child_cleanup_all(ms, cleanup);
 			exit(1);
+		}
 		if(!spec->argv || !spec->argv[0])		//filter the pure redirections 
+		{
+			child_cleanup_all(ms, cleanup);
 			exit(0);
+		}
 		if (is_builtin(spec->argv[0]))
 		{	
 			builtin_dispatch(spec->argv, ms, &rc, 0);
+			child_cleanup_all(ms, cleanup);
 			exit (rc);
 		}
 		envp = env_to_envp(ms->env);
 		if (!envp)
 		{
 			ms_perror("minishell", "env");
+			child_cleanup_all(ms, cleanup);
 			exit(1);
 		}
 		//if it has a direct path
 		if (ft_strchr(spec->argv[0], '/'))
-		{
+		{	
+
+			if (stat(spec->argv[0], &path_stat) == 0)
+			{
+				if (S_ISDIR(path_stat.st_mode))
+				{
+					write(2, "minishell: ", 11);
+					write(2, spec->argv[0], ft_strlen(spec->argv[0]));
+					write(2, ": Is a directory\n", 18);
+					free_str_arr(&envp);
+					child_cleanup_all(ms, cleanup);
+					exit(126);
+				}
+			}
 			execve(spec->argv[0], spec->argv, envp);
 			if (errno == ENOENT)
 			{
+				ms_perror("minishell", spec->argv[0]);	//no such file or directory
 				free_str_arr(&envp);
+				child_cleanup_all(ms, cleanup);
 				exit(127);
 			}
+			else if (errno == EACCES)
+			{
+				ms_perror("minishell", spec->argv[0]);	//no such file or directory
+				free_str_arr(&envp);
+				child_cleanup_all(ms, cleanup);
+				exit(126);
+			}
+			ms_perror("minishell", spec->argv[0]);
 			free_str_arr(&envp);
+			child_cleanup_all(ms, cleanup);
 			exit(126);
 		}
 		full_path = find_in_path(spec->argv[0], ms->env);
@@ -131,6 +170,7 @@ int	exec_one_cmd(t_cmdspec *spec, t_ms *ms)
 		{
 			exec_error(spec->argv[0]);
 			free_str_arr(&envp);
+			child_cleanup_all(ms, cleanup);
 			exit(127);
 		}
 		execve(full_path, spec->argv, envp);
@@ -138,18 +178,25 @@ int	exec_one_cmd(t_cmdspec *spec, t_ms *ms)
 		{
 			free(full_path);
 			free_str_arr(&envp);
+			child_cleanup_all(ms, cleanup);
 			exit(127);
 		}
 		free(full_path);
 		free_str_arr(&envp);
-		exit(126);		
-	}	
-	if (waitpid(pid, &status, 0) < 0)
-	{
-		ms_perror("minishell", "waitpid");
-		hdoc_cleanup(spec->redirs);
-		return (1);
+		child_cleanup_all(ms, cleanup);
+		exit(126);
 	}
+	init_exec_signals();
+	while (waitpid(pid, &status, 0) < 0)
+	{
+		if (errno != EINTR)
+		{
+			ms_perror("minishell", "waitpid");
+			hdoc_cleanup(spec->redirs);
+			return (1);
+		}
+	}
+	init_prompt_signals();
 	hdoc_cleanup(spec->redirs);
 	return (status_to_rc(status));
 }

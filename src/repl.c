@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 16:20:57 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/24 13:22:37 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/26 19:00:14 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ void	repl(t_ms *ms)
 	t_ast		*ast;
 	int			lex_status;
 	int			parse_status;
-	extern int rl_catch_signals;
+	extern int	rl_catch_signals;
+	t_cu		cleanup;
 	
 	init_prompt_signals();
     rl_catch_signals = 0;
@@ -34,6 +35,7 @@ void	repl(t_ms *ms)
 		if (!line)
 		{
 			printf("exit\n");
+			clear_history();
 			// termios_restore();
 			break;
 		}
@@ -67,9 +69,23 @@ void	repl(t_ms *ms)
 			free_tokens(toks);
 			continue;
 		}
-		ms->last_status = exec_run_node(ast, ms);
+		cleanup.ast = ast;
+		cleanup.toks = toks;
+		cleanup.spec = NULL;
+		cleanup.stages = NULL;
+		cleanup.specs = NULL;
+		cleanup.pipes = NULL;
+		cleanup.pids = NULL;
+		cleanup.pipe_len = 0;
+		
+		ms->last_status = exec_run_node(ast, ms, &cleanup);
 		ast_free(ast);
 		free_tokens(toks);
+		if (ms->exit_requested)
+		{
+			clear_history();
+			break;
+		}
 	}
 }
 
