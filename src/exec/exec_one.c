@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:26:43 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/28 12:08:42 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/28 13:11:13 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 
 static	int	save_std(int std_backup[2])
 {
@@ -71,11 +72,12 @@ static	int	exec_stateful(t_cmdspec *spec, t_ms *ms)
 
 int	exec_one_cmd(t_cmdspec *spec, t_ms *ms, t_cu *cleanup)
 {
-	pid_t	pid;
-	int		status;
-	char	**envp;
-	char	*full_path;
-	int		rc;
+	pid_t			pid;
+	int				status;
+	char			**envp;
+	char			*full_path;
+	int				rc;
+	struct	stat	path_stat;
 
 	if ((!spec->argv || !spec->argv[0]) && !spec->redirs)
 		return (0);
@@ -129,7 +131,20 @@ int	exec_one_cmd(t_cmdspec *spec, t_ms *ms, t_cu *cleanup)
 		}
 		//if it has a direct path
 		if (ft_strchr(spec->argv[0], '/'))
-		{
+		{	
+
+			if (stat(spec->argv[0], &path_stat) == 0)
+			{
+				if (S_ISDIR(path_stat.st_mode))
+				{
+					write(2, "minishell: ", 11);
+					write(2, spec->argv[0], ft_strlen(spec->argv[0]));
+					write(2, ": Is a directory\n", 18);
+					free_str_arr(&envp);
+					child_cleanup_all(ms, cleanup);
+					exit(126);
+				}
+			}
 			execve(spec->argv[0], spec->argv, envp);
 			if (errno == ENOENT)
 			{
@@ -137,15 +152,6 @@ int	exec_one_cmd(t_cmdspec *spec, t_ms *ms, t_cu *cleanup)
 				free_str_arr(&envp);
 				child_cleanup_all(ms, cleanup);
 				exit(127);
-			}
-			else if (errno == EISDIR)
-			{
-				write(2, "minishell: ", 11);
-				write(2, spec->argv[0], ft_strlen(spec->argv[0]));
-				write(2, ":Is a directory\n", 17);
-				free_str_arr(&envp);
-				child_cleanup_all(ms, cleanup);
-				exit(126);
 			}
 			else if (errno == EACCES)
 			{
