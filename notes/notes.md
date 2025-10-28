@@ -25,4 +25,4 @@ to do later
 
 7) (fixed) ctrl c should should always show ^C 
 
-8) on heredoc ctrl c should quit
+8) (fixed) on heredoc ctrl c should quit
