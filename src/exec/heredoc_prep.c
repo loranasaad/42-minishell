@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 16:45:44 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/28 10:52:52 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/28 11:27:10 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 #include "exec.h"
 #include <signal.h>
 #include <readline/readline.h>
-
-extern	int	rl_done;
 
 static	int	hdoc_event(void)
 {
