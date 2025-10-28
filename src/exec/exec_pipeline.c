@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:00:47 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/27 23:36:54 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/28 13:11:18 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 
 static	void	hdoc_cleanup_specs(t_cmdspec *s, int len)
 {
@@ -132,9 +133,10 @@ static	int	wait_pipeline(pid_t *pids, int len)
 
 static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *ms, t_cu *cleanup)
 {
-	char	**envp;
-	char	*full_path;
-	int		rc;
+	char			**envp;
+	char			*full_path;
+	int				rc;
+	struct	stat	path_stat;
 	
 	rc = 0;
 	signal(SIGINT, SIG_DFL);	//handle signals
@@ -176,25 +178,36 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 		exit(1);
 	}
 		//if it has a direct path
-	if (ft_strchr(spec->argv[0], '/')) // fix_laura beginn
-	{
-		if (is_a_dir(spec->argv[0]))
+	if (ft_strchr(spec->argv[0], '/'))
+	{		
+		if (stat(spec->argv[0], &path_stat) == 0)
 		{
-			print_dir_err_msg(spec->argv[0]);
+			if (S_ISDIR(path_stat.st_mode))
+			{
+				write(2, "minishell: ", 11);
+				write(2, spec->argv[0], ft_strlen(spec->argv[0]));
+				write(2, ": Is a directory\n", 18);
+				free_str_arr(&envp);
+				child_cleanup_all(ms, cleanup);
+				exit(126);
+			}
+		}
+		execve(spec->argv[0], spec->argv, envp);
+		if (errno == ENOENT)
+		{
+			ms_perror("minishell", spec->argv[0]);
 			free_str_arr(&envp);
 			child_cleanup_all(ms, cleanup);
 			exit (126);
 		}
-		execve(spec->argv[0], spec->argv, envp);
-		int saved_errno = errno;
-		int	exit_status = 0;
-		if (saved_errno == ENOENT)
-			exit_status = 127;
-		else if (saved_errno == EACCES)
-			exit_status = 126;
-		else
-			exit_status = 1;
-		print_general_err_msg(spec->argv[0], saved_errno);
+		else if (errno == EACCES)
+		{
+			ms_perror("minishell", spec->argv[0]);	//no such file or directory
+			free_str_arr(&envp);
+			child_cleanup_all(ms, cleanup);
+			exit(126);
+		}
+		ms_perror("minishell", spec->argv[0]);
 		free_str_arr(&envp);
 		child_cleanup_all(ms, cleanup);
 		exit(exit_status);
