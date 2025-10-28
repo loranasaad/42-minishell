@@ -66,6 +66,7 @@ void	repl(t_ms *ms);
 void	init_prompt_signals(void);
 void	sigint_exec_handler(int sig);
 void	init_exec_signals(void);
+void	sigquit_exec_handler(int sig);
 
 //int		termios_disable_echoctl(void);
 //void	termios_restore(void);
