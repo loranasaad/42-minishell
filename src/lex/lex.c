@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lex.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 15:42:27 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/21 14:17:13 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/28 13:29:32 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ static	int	read_word(int *i, const char *line, int *quoted)
 		*quoted = 1;
 	else if (segments == 1 && sq_seen == 0 && dq_seen == 1)
 		*quoted = 2;
+	else if (sq_seen || dq_seen)
+		*quoted = 3;
 	else
 		*quoted = 0;
 	return (len);
