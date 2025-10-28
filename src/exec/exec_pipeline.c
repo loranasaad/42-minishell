@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 00:00:47 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/27 15:29:24 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/28 12:08:40 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,10 +181,28 @@ static	void exec_child(int i, int len, int (* pipes)[2], t_cmdspec *spec, t_ms *
 		execve(spec->argv[0], spec->argv, envp);
 		if (errno == ENOENT)
 		{
+			ms_perror("minishell", spec->argv[0]);
 			free_str_arr(&envp);
 			child_cleanup_all(ms, cleanup);
 			exit(127);
 		}
+		else if (errno == EISDIR)
+		{
+			write(2, "minishell: ", 11);
+			write(2, spec->argv[0], ft_strlen(spec->argv[0]));
+			write(2, ":Is a directory\n", 17);
+			free_str_arr(&envp);
+			child_cleanup_all(ms, cleanup);
+			exit(126);
+		}
+		else if (errno == EACCES)
+		{
+			ms_perror("minishell", spec->argv[0]);	//no such file or directory
+			free_str_arr(&envp);
+			child_cleanup_all(ms, cleanup);
+			exit(126);
+		}
+		ms_perror("minishell", spec->argv[0]);
 		free_str_arr(&envp);
 		child_cleanup_all(ms, cleanup);
 		exit(126);			
