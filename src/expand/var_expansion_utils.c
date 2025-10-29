@@ -1,20 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   var_expansion2.c                                   :+:      :+:    :+:   */
+/*   var_expansion_helper.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/05 16:21:03 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/15 15:17:45 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 14:05:08 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "parser.h"
 
-static int	is_valid_first_char(char c);
-static int	is_valid_char(char c);
+static int	is_valid_char(char c, int first);
 static char	*get_normal_segment(char *str, int *i);
 static char	*get_expanded_segment(char *str, int *i, t_ms *ms);
 static char	*get_variable_name(char *str, int *i);
@@ -34,7 +33,7 @@ char	*get_next_segment(char *str, int *i, t_ms *ms, int *end)
 		}
 		else if (str[*i] == ' ' || str[*i] == '\t' || str[*i] == '\0')
 			return (ft_strdup("$"));
-		else if (is_valid_first_char(str[*i]) || str[*i] == '{')
+		else if (is_valid_char(str[*i], 1) || str[*i] == '{')
 			return (get_expanded_segment(str, i, ms));
 		else
 		{
@@ -88,7 +87,8 @@ static char	*get_variable_name(char *str, int *i)
 			(*i)++;
 		if (!str[*i])
 		{
-			write(2, "minishell: syntax error: unexpected end of variable expansion\n", 62);
+			write(2, "minishell: syntax error: \
+					unexpected end of variable expansion\n", 62);
 			return (NULL);
 		}
 		end = (*i)++;
@@ -97,24 +97,26 @@ static char	*get_variable_name(char *str, int *i)
 	else
 	{
 		start = (*i)++;
-		while (is_valid_char(str[*i]))
+		while (is_valid_char(str[*i], 0))
 			(*i)++;
 		end = *i;
 		return (ft_substr(str, start, end - start));
 	}
 }
 
-static int	is_valid_first_char(char c)
+static int	is_valid_char(char c, int first)
 {
-	return ((c >= 'a' && c <= 'z')
-		|| (c >= 'A' && c <= 'Z')
-		|| c == '_');
-}
-
-static int	is_valid_char(char c)
-{
-	return ((c >= 'a' && c <= 'z')
-		|| (c >= 'A' && c <= 'Z')
-		|| (c >= '0' && c <= '9')
-		|| c == '_');
+	if (first)
+	{
+		return ((c >= 'a' && c <= 'z')
+			|| (c >= 'A' && c <= 'Z')
+			|| c == '_');
+	}
+	else
+	{
+		return ((c >= 'a' && c <= 'z')
+			|| (c >= 'A' && c <= 'Z')
+			|| (c >= '0' && c <= '9')
+			|| c == '_');
+	}
 }

@@ -3,6 +3,7 @@
 #ifndef PARSER_H
 # define PARSER_H
 
+
 typedef	struct	s_token	t_token;
 
 typedef	enum e_astkind
@@ -57,9 +58,12 @@ void	free_cmdspec(t_cmdspec *spec);
 t_ast	*parse_line(t_token *toks, int *status);
 void	ast_free(t_ast *n);
 
-int	parser_validate(t_token *token);
+int		parser_validate(t_token *token);
 
-int	parser_build_pipeline(t_token *toks, t_ast **out_root);
+int		parser_build_pipeline(t_token *toks, t_ast **out_root);
+
+
+t_redir	*build_heredoc(t_token *tok);
 
 
 #endif

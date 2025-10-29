@@ -94,7 +94,6 @@ char	*env_get(t_env *env, char *key);
 int		env_set(t_env **env, char *key, char *value, int overwrite);
 int		env_unset(t_env **env, char *key);
 char	**env_to_envp(t_env *env);
-int		build_envp(t_env *env, char **envp);
 void	env_free(t_env **env);
 void	handle_shlvl(t_env **env);
 void	build_min_env(t_env **env);
@@ -102,7 +101,6 @@ void	free_str_arr(char ***words);
 
 char	*find_in_path(char const *name, t_env *env);
 int		build_cmdspec_from_segment(t_token *start, t_token *end, t_cmdspec *out, t_ms *ms);
-t_redir	*build_tredir(t_token *tok, t_ms *ms);
 void	free_cmdspec(t_cmdspec *spec);
 char	**strv_push(char **v, const char *s);
 
@@ -122,7 +120,6 @@ char	**ft_split(char const *s, char c);
 char	*find_in_path(const char *name, t_env *env);
 
 // builtin
-t_redir	*build_heredoc(t_token *tok);
 void	builtin_dispatch(char **argv, t_ms *ms, int *rc, int print);
 int		builtin_echo(char **argv);
 int		builtin_pwd(char **argv);
@@ -148,6 +145,6 @@ int		is_a_dir(char *path); // new
 void	print_dir_err_msg(char *dir);
 void	print_general_err_msg(char *arg, int saved_errno);
 
-void	handle_empty_arg(t_cmdspec *out);
+int		handle_redir(t_cmdspec *out, t_token *tok, t_ms *ms);
 
 #endif

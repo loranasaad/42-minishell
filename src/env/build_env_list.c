@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_list1.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:17:24 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/25 01:11:11 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/29 16:37:37 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_env	*env_init(char **envp)
 	return (env);
 }
 
-// helper for env_init
+// helper for env_init, here I have exit for malloc fail
 void	fill_env(char **envp, t_env	**env)
 {
 	int		i;
@@ -47,7 +47,7 @@ void	fill_env(char **envp, t_env	**env)
 		if (add_env_var(env, key, value) == 1)
 		{
 			env_free(env);
-			exit (1); // malloc fails => stop there
+			exit (1);
 		}
 		i++;
 	}

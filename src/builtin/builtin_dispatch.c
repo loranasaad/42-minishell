@@ -3,23 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_dispatch.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 16:14:22 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/24 13:07:56 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/29 13:30:27 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*print is for exit : 1 if single command, 0 in pipeline
- Exit prints "exit" as single cmd and never print in the pipeline 
- so it need to be changed in the execution part
- In exec_one.c : in exec_stateful I have builtin_dispatch(spec->argv, ms, &rc, 1);
- and in exec_one_cmd builtin_dispatch(spec->argv, ms, &rc, 0); although it doesnt matter
- here because exit will never be called there if I understand that correctly
- In exec_pipeline.c : in exec_child builtin_dispatch(spec.argv, ms, &rc, 0);
-*/
+/* print is for exit : 1 if single command, 0 in pipeline
+   Exit prints "exit" as single cmd and never print in the pipeline */
 void	builtin_dispatch(char **argv, t_ms *ms, int *rc, int print)
 {
 	if (ft_strcmp(argv[0], "echo") == 0)

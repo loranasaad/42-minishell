@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 15:12:26 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/28 13:32:55 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 13:31:28 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static void	handle_invalid_key(char *key, char *value, int *status)
 {
 	char	*s1;
 	char	*s2;
-	
+
 	s1 = "minishell: export: ";
 	s2 = ": not a valid identifier\n";
 	write(2, s1, ft_strlen(s1));

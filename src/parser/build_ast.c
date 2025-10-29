@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_build.c                                     :+:      :+:    :+:   */
+/*   build_ast.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 16:37:02 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/22 17:36:50 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/29 16:06:54 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ static t_ast	*ast_new_cmd(t_token *start, t_token *end)
 	node->end = end;
 	return (node);
 }
+
 static t_ast	*ast_new_pipe(t_ast *left, t_ast *right)
 {
 	t_ast	*node;
@@ -71,8 +72,9 @@ static void	free_little_tree(t_ast	*node)
 	return ;
 }
 
-// return 0 when error (malloc fails), 1 when success
-int parser_build_pipeline(t_token *toks, t_ast **out_root)
+/* build the ast 
+ return 0 when error (malloc fails), 1 when success */
+int	parser_build_pipeline(t_token *toks, t_ast **out_root)
 {
 	t_token		*start;
 	t_token		*end;
@@ -80,7 +82,6 @@ int parser_build_pipeline(t_token *toks, t_ast **out_root)
 	t_pipeline	p;
 
 	it = toks;
-
 	*out_root = NULL;
 	if (!next_segment(&it, &start, &end))
 		return (1);
@@ -91,20 +92,12 @@ int parser_build_pipeline(t_token *toks, t_ast **out_root)
 	{
 		p.right = ast_new_cmd(start, end);
 		if (!p.right)
-		{
-			free_little_tree(p.left);
-			return (0);
-		}
+			return (free_little_tree(p.left), 0);
 		p.tmp = ast_new_pipe(p.left, p.right);
 		if (!p.tmp)
-		{
-			free_little_tree(p.right);
-			free_little_tree(p.left);
-			return (0);
-		}
+			return (free_little_tree(p.right), free_little_tree(p.left), 0);
 		p.left = p.tmp;
 	}
 	*out_root = p.left;
 	return (1);
 }
-

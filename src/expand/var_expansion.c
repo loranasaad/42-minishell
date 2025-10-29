@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   var_expansion.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 13:10:59 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/24 13:31:37 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/29 13:52:37 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 
 static char	*join_res_seg(char *result, char *segment);
 
-// return malloced str of input with var expansion; status is 0 if malloc failed or { not closed
+/* return malloced str of input with var expansion
+   status is 0 if malloc failed or { not closed */
 char	*handle_var_expansion(char *str, int quoted, t_ms *ms, int *status)
 {
 	char	*result;
@@ -33,7 +34,7 @@ char	*handle_var_expansion(char *str, int quoted, t_ms *ms, int *status)
 	}
 	if (quoted == 0 || quoted == 2)
 		result = expand_dollar_sign(tilde_expanded, ms);
-	else	//quited == 1
+	else
 		result = ft_strdup(tilde_expanded);
 	free(tilde_expanded);
 	if (!result)

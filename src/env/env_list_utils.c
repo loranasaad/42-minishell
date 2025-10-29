@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_list2.c                                        :+:      :+:    :+:   */
+/*   env_list_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/22 15:17:28 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/22 15:59:22 by latabagl         ###   ########.fr       */
+/*   Created: 2025/10/29 16:48:15 by latabagl          #+#    #+#             */
+/*   Updated: 2025/10/29 16:48:19 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,29 +106,4 @@ int	env_unset(t_env **env, char *key)
 		w = w->next;
 	}
 	return (1);
-}
-
-// list => array (to be passed to execve) 
-char	**env_to_envp(t_env *env)
-{
-	t_env	*w;
-	int		i;
-	char	**envp;
-
-	i = 0;
-	w = env;
-	while (w)
-	{
-		i++;
-		w = w->next;
-	}
-	envp = malloc((i + 1) * sizeof(char *));
-	if (!envp)
-		return (NULL);
-	if (build_envp(env, envp) == 1)
-	{
-		free_str_arr(&envp);
-		return (NULL);
-	}
-	return (envp);
 }

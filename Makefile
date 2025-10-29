@@ -15,20 +15,20 @@ SRCS = \
 	src/lex/lex_utils.c \
 	src/lex/tok_utils.c \
 	\
-	src/parser/ast_free.c \
+	src/parser/parser_cleanup.c \
 	src/parser/parse_line.c \
-	src/parser/validate.c \
-	src/parser/parser_build.c \
-	src/parser/cmdspec1.c \
-	src/parser/cmdspec2.c \
-	src/parser/cmdspec3.c \
-	src/parser/field_split.c \
-	src/parser/tilde_expansion.c \
+	src/parser/parser_validate.c \
+	src/parser/build_ast.c \
+	src/parser/cmdspec.c \
+	src/parser/cmdspec_redir.c \
+	src/parser/cmdspec_heredoc.c \
+	src/parser/cmdspec_utils.c \
 	\
-	src/env/env_list1.c \
-	src/env/env_list2.c \
-	src/env/env_list3.c \
-	src/env/path.c \
+	src/env/build_env_list.c \
+	src/env/env_cleaning.c \
+	src/env/env_list_utils.c \
+	src/env/env_to_envp.c \
+	src/env/find_in_path.c \
 	\
 	src/exec/exec_node.c \
 	src/exec/exec_one.c \
@@ -39,7 +39,9 @@ SRCS = \
 	src/exec/heredoc_utils.c \
 	\
 	src/expand/var_expansion.c \
-	src/expand/var_expansion2.c \
+	src/expand/var_expansion_utils.c \
+	src/expand/tilde_expansion.c \
+	src/expand/field_split.c \
 	\
 	src/builtin/builtin_dispatch.c \
 	src/builtin/cd.c \
@@ -47,7 +49,7 @@ SRCS = \
 	src/builtin/env.c \
 	src/builtin/exit.c \
 	src/builtin/export.c \
-	src/builtin/export_helper.c \
+	src/builtin/export_utils.c \
 	src/builtin/export_print.c \
 	src/builtin/pwd.c \
 	src/builtin/unset.c \
