@@ -6,39 +6,28 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 15:12:22 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/29 13:45:54 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 16:58:07 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <readline/history.h>
 
-static int	is_numeric(char *arg);
-static int	get_exit_code(char **argv, t_ms *ms, int *r);
-
-int	builtin_exit(char **argv, t_ms *ms, int in_parent)
+static int	is_numeric(char *arg)
 {
-	int	exit_code;
-	int	r;
+	int		i;
 
-	if (in_parent)
-		printf("exit\n");
-	r = 0;
-	exit_code = get_exit_code(argv, ms, &r);
-	if (r)
-		return (1);
-	ms->last_status = exit_code;
-	if (in_parent)
+	i = 0;
+	if (arg[i] == '+' || arg[i] == '-')
+		i++;
+	while (arg[i])
 	{
-		ms->exit_requested = 1;
-		return (exit_code);
+		if (arg[i] >= '0' && arg[i] <= '9')
+			i++;
+		else
+			return (0);
 	}
-	else
-	{
-		clear_history();
-		env_free(&(ms->env));
-		exit(exit_code);
-	}
+	return (1);
 }
 
 static int	get_exit_code(char **argv, t_ms *ms, int *r)
@@ -65,19 +54,27 @@ static int	get_exit_code(char **argv, t_ms *ms, int *r)
 	return (exit_code);
 }
 
-static int	is_numeric(char *arg)
+int	builtin_exit(char **argv, t_ms *ms, int in_parent)
 {
-	int		i;
+	int	exit_code;
+	int	r;
 
-	i = 0;
-	if (arg[i] == '+' || arg[i] == '-')
-		i++;
-	while (arg[i])
+	if (in_parent)
+		printf("exit\n");
+	r = 0;
+	exit_code = get_exit_code(argv, ms, &r);
+	if (r)
+		return (1);
+	ms->last_status = exit_code;
+	if (in_parent)
 	{
-		if (arg[i] >= '0' && arg[i] <= '9')
-			i++;
-		else
-			return (0);
+		ms->exit_requested = 1;
+		return (exit_code);
 	}
-	return (1);
+	else
+	{
+		clear_history();
+		env_free(&(ms->env));
+		exit(exit_code);
+	}
 }

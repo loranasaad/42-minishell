@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_list1.c                                        :+:      :+:    :+:   */
+/*   build_env_list.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 15:17:24 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/29 16:37:37 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 17:09:09 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,56 +53,59 @@ void	fill_env(char **envp, t_env	**env)
 	}
 }
 
-// helper for env_init
-char	*get_key(char *env_var)
+// Key exists => overwrite or not the value. No key => add new node 
+int	env_set(t_env **env, char *key, char *value, int overwrite)
 {
-	size_t	i;
-
-	i = 0;
-	while (env_var[i] && env_var[i] != '=')
-	{
-		i++;
-	}
-	return (ft_substr(env_var, 0, i));
-}
-
-// add an env var to the list, val must never be NULL but "" if nothing
-int	add_env_var(t_env **env, char *key, char *value)
-{
-	t_env	*var;
 	t_env	*tmp;
 
-	var = malloc(sizeof(t_env));
-	if (!var || !key || !value)
-	{
-		free(value);
-		free(key);
-		free(var);
+	if (!key || !env)
 		return (1);
-	}
-	var->key = key;
-	var->value = value;
-	var->has_value = 1;
-	var->next = NULL;
-	if (!*env)
-		*env = var;
-	else
+	if (!value)
+		value = "";
+	tmp = *env;
+	while (tmp)
 	{
-		tmp = *env;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = var;
+		if (tmp->key && ft_strcmp(tmp->key, key) == 0)
+		{
+			if (overwrite)
+			{
+				free(tmp->value);
+				tmp->value = ft_strdup(value);
+				if (!tmp->value)
+					return (1);
+			}
+			return (0);
+		}
+		tmp = tmp->next;
 	}
-	return (0);
+	return (add_env_var(env, ft_strdup(key), ft_strdup(value)));
 }
 
-void	build_min_env(t_env **env)
+// find the key and remove the node, return 1 if key not found
+int	env_unset(t_env **env, char *key)
 {
-	char	*cwd;
+	t_env	*w;
+	t_env	*before;
 
-	cwd = getcwd(NULL, 0);
-	env_set(env, "SHLVL", "1", 0);
-	env_set(env, "PWD", cwd, 0);
-	env_set(env, "PATH", "/usr/bin:/bin", 0);
-	free(cwd);
+	if (!key || !env)
+		return (1);
+	before = NULL;
+	w = *env;
+	while (w)
+	{
+		if (w->key && ft_strcmp(w->key, key) == 0)
+		{
+			if (before)
+				before->next = w->next;
+			else
+				*env = w->next;
+			free(w->key);
+			free(w->value);
+			free(w);
+			return (0);
+		}
+		before = w;
+		w = w->next;
+	}
+	return (1);
 }

@@ -6,35 +6,29 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 15:11:19 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/22 15:30:16 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 16:57:48 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	error_msg(char *msg);
-static int	general_error_msg(char *arg);
-static int	builtin_cd_helper(char **argv, t_ms *ms, int *status);
-
-int	builtin_cd(char **argv, t_ms *ms)
+static int	general_error_msg(char *arg)
 {
-	int		status;
-	int		error;
-	char	*pwd;
-	char	*new_pwd;
+	write(2, "minishell: cd: ", 15);
+	if (arg)
+	{
+		write(2, arg, ft_strlen(arg));
+		write(2, ": ", 2);
+	}
+	write(2, strerror(errno), ft_strlen(strerror(errno)));
+	write(2, "\n", 1);
+	return (1);
+}
 
-	status = 0;
-	pwd = env_get(ms->env, "PWD");
-	error = builtin_cd_helper(argv, ms, &status);
-	if (error)
-		return (1);
-	if (status != 0)
-		return (general_error_msg(argv[1]));
-	env_set(&ms->env, "OLDPWD", pwd, 1);
-	new_pwd = getcwd(NULL, 0);
-	env_set(&ms->env, "PWD", new_pwd, 1);
-	free(new_pwd);
-	return (0);
+static int	error_msg(char *msg)
+{
+	write(2, msg, ft_strlen(msg));
+	return (1);
 }
 
 static int	builtin_cd_helper(char **argv, t_ms *ms, int *status)
@@ -64,21 +58,23 @@ static int	builtin_cd_helper(char **argv, t_ms *ms, int *status)
 	return (0);
 }
 
-static int	general_error_msg(char *arg)
+int	builtin_cd(char **argv, t_ms *ms)
 {
-	write(2, "minishell: cd: ", 15);
-	if (arg)
-	{
-		write(2, arg, ft_strlen(arg));
-		write(2, ": ", 2);
-	}
-	write(2, strerror(errno), ft_strlen(strerror(errno)));
-	write(2, "\n", 1);
-	return (1);
-}
+	int		status;
+	int		error;
+	char	*pwd;
+	char	*new_pwd;
 
-static int	error_msg(char *msg)
-{
-	write(2, msg, ft_strlen(msg));
-	return (1);
+	status = 0;
+	pwd = env_get(ms->env, "PWD");
+	error = builtin_cd_helper(argv, ms, &status);
+	if (error)
+		return (1);
+	if (status != 0)
+		return (general_error_msg(argv[1]));
+	env_set(&ms->env, "OLDPWD", pwd, 1);
+	new_pwd = getcwd(NULL, 0);
+	env_set(&ms->env, "PWD", new_pwd, 1);
+	free(new_pwd);
+	return (0);
 }

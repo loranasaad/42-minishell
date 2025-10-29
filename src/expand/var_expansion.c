@@ -6,14 +6,23 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 13:10:59 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/29 13:52:37 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 17:01:57 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "parser.h"
 
-static char	*join_res_seg(char *result, char *segment);
+static char	*join_res_seg(char *result, char *segment)
+{
+	char	*tmp;
+
+	tmp = result;
+	result = ft_strjoin(result, segment);
+	free(tmp);
+	free(segment);
+	return (result);
+}
 
 /* return malloced str of input with var expansion
    status is 0 if malloc failed or { not closed */
@@ -70,16 +79,5 @@ char	*expand_dollar_sign(char *str, t_ms *ms)
 		}
 		result = join_res_seg(result, segment);
 	}
-	return (result);
-}
-
-static char	*join_res_seg(char *result, char *segment)
-{
-	char	*tmp;
-
-	tmp = result;
-	result = ft_strjoin(result, segment);
-	free(tmp);
-	free(segment);
 	return (result);
 }

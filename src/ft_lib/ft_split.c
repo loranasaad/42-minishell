@@ -12,36 +12,6 @@
 
 #include "minishell.h"
 
-size_t	countwords(char const *s, char c);
-void	find_and_allocate_words(char const *s, char c, char **w, size_t w_i);
-char	*allocate_word(char const *s, size_t begin, size_t end);
-void	free_words(char **words, size_t count);
-
-char	**ft_split(char const *s, char c)
-{
-	char	**strings_array;
-	size_t	nwords;
-	size_t	i;
-
-	i = 0;
-	nwords = countwords(s, c);
-	strings_array = malloc(sizeof(char *) * (nwords + 1));
-	if (!strings_array)
-		return (NULL);
-	find_and_allocate_words(s, c, strings_array, 0);
-	while (i < nwords)
-	{
-		if (!strings_array[i])
-		{
-			free_words(strings_array, nwords);
-			return (NULL);
-		}
-		i++;
-	}
-	strings_array[nwords] = NULL;
-	return (strings_array);
-}
-
 size_t	countwords(char const *s, char c)
 {
 	size_t	nwords;
@@ -61,6 +31,20 @@ size_t	countwords(char const *s, char c)
 		s++;
 	}
 	return (nwords);
+}
+
+char	*allocate_word(char const *s, size_t begin, size_t end)
+{
+	char	*word;
+
+	word = malloc(end - begin + 1);
+	if (!word)
+	{
+		return (NULL);
+	}
+	ft_memcpy(word, s + begin, end - begin);
+	word[end - begin] = '\0';
+	return (word);
 }
 
 void	find_and_allocate_words(char const *s, char c, char **w, size_t w_i)
@@ -91,20 +75,6 @@ void	find_and_allocate_words(char const *s, char c, char **w, size_t w_i)
 	}
 }
 
-char	*allocate_word(char const *s, size_t begin, size_t end)
-{
-	char	*word;
-
-	word = malloc(end - begin + 1);
-	if (!word)
-	{
-		return (NULL);
-	}
-	ft_memcpy(word, s + begin, end - begin);
-	word[end - begin] = '\0';
-	return (word);
-}
-
 void	free_words(char **words, size_t count)
 {
 	size_t	i;
@@ -117,15 +87,28 @@ void	free_words(char **words, size_t count)
 	}
 	free(words);
 }
-/*
-int main(void)
+
+char	**ft_split(char const *s, char c)
 {
-    char **result = ft_split(" a b c   d", ' ');
-    if (!result)
-        return 1;
-    for (size_t i = 0; result[i]; i++) {
-        printf("word[%zu]: %s\n", i, result[i]);
-        free(result[i]);
-    }
-    free(result);
-}*/
+	char	**strings_array;
+	size_t	nwords;
+	size_t	i;
+
+	i = 0;
+	nwords = countwords(s, c);
+	strings_array = malloc(sizeof(char *) * (nwords + 1));
+	if (!strings_array)
+		return (NULL);
+	find_and_allocate_words(s, c, strings_array, 0);
+	while (i < nwords)
+	{
+		if (!strings_array[i])
+		{
+			free_words(strings_array, nwords);
+			return (NULL);
+		}
+		i++;
+	}
+	strings_array[nwords] = NULL;
+	return (strings_array);
+}
