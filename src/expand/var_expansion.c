@@ -6,12 +6,11 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 13:10:59 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/29 17:01:57 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 18:16:44 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "parser.h"
 
 static char	*join_res_seg(char *result, char *segment)
 {

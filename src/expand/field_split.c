@@ -6,12 +6,11 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 11:44:36 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/29 14:15:08 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 18:16:31 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "parser.h"
 
 static int	add_arg(int start, int end, char *val, t_cmdspec *out);
 

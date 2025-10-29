@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 17:50:14 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/29 18:12:53 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 18:19:26 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <string.h>
 # include <errno.h>
+# include <readline/history.h>
 
 # include "parser.h"
 

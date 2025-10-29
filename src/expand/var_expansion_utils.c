@@ -6,12 +6,11 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/05 16:21:03 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/29 17:01:07 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 18:16:40 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "parser.h"
 
 static int	is_valid_char(char c, int first)
 {

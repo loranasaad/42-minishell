@@ -6,12 +6,11 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 15:12:22 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/29 16:58:07 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 18:17:44 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <readline/history.h>
 
 static int	is_numeric(char *arg)
 {

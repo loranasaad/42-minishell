@@ -6,12 +6,11 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/23 12:12:20 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/29 16:59:56 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 18:16:35 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "parser.h"
 
 static int	is_tilde(char *str, int quoted)
 {
