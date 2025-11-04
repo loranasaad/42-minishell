@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 17:50:14 by latabagl          #+#    #+#             */
-/*   Updated: 2025/11/04 16:08:35 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/11/04 17:12:40 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,27 +68,24 @@ typedef struct s_cu
 	int			pipe_len;
 }				t_cu;
 
-typedef	struct s_seen
+typedef struct s_seen
 {
 	int	single_quote;
 	int	double_quote;
 }		t_seen;
 
-// # define IFS " \t\n"
-
 extern int	g_signal;
+
 // repl
 void	repl(t_ms *ms);
 void	init_cleanup(t_cu *cleanup, t_ast *ast, t_token *toks);
 // signals
-
 void	sigquit_exec_handler(int sig);
 void	sigint_exec_handler(int sig);
 void	init_exec_signals(void);
 void	sigint_handler(int sig);
 void	sigquit_handler(int sig);
 void	init_prompt_signals(void);
-
 // lex
 char	*copy_word(int *k, const char *line, int *quoted);
 int		read_word(int *i, const char *line, int *quoted);
@@ -100,10 +97,8 @@ t_token	*lex_line(const char *line, int *lex_status);
 t_token	*tok_new(t_tok kind, char *val, int quoted);
 void	tok_push_back(t_token **head, t_token *node);
 void	free_tokens(t_token *t);
-
 //utils
 void	ms_perror(const char *prefix, const char *arg);
-
 // environment list
 t_env	*env_init(char **envp);
 void	fill_env(char **envp, t_env	**env);
@@ -117,7 +112,6 @@ void	env_free(t_env **env);
 void	handle_shlvl(t_env **env);
 void	build_min_env(t_env **env);
 void	free_str_arr(char ***words);
-
 // cmdspec
 char	*find_in_path(char const *name, t_env *env);
 int		build_cmdspec_from_segment(t_token *start, t_token *end, 
@@ -125,7 +119,6 @@ int		build_cmdspec_from_segment(t_token *start, t_token *end,
 int		handle_redir(t_cmdspec *out, t_token *tok, t_ms *ms);
 void	free_cmdspec(t_cmdspec *spec);
 char	**strv_push(char **v, const char *s);
-
 // ft_lib
 int		ft_atoi(const char *str);
 char	*ft_itoa(int n);
@@ -137,7 +130,6 @@ size_t	ft_strlen(const char *s);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 int		ft_strcmp(const char *s1, const char *s2);
 char	**ft_split(char const *s, char c);
-
 // builtin
 void	builtin_dispatch(char **argv, t_ms *ms, int *rc, int print);
 int		builtin_echo(char **argv);
@@ -151,7 +143,6 @@ int		builtin_export(char **argv, t_ms *ms);
 int		export_print_env(t_ms *ms);
 int		env_set_export(t_env **env, char *key, char *value, int has_value);
 int		is_key_valid(char *key);
-
 // expand
 char	*handle_var_expansion(char *str, int quoted, t_ms *ms, int *status);
 char	*get_next_segment(char *str, int *i, t_ms *ms, int *end);
