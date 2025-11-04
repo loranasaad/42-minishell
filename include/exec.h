@@ -6,7 +6,7 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 17:17:31 by loasaad           #+#    #+#             */
-/*   Updated: 2025/11/04 17:21:01 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/11/04 17:49:46 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,16 @@
 # include "parser.h"
 # include <signal.h>
 
-# define CU_HDOCS (1 << 0)
-# define CU_SPECS (1 << 1)
-# define CU_STAGES (1 << 2)
-# define CU_PIPES (1 << 3)
-# define CU_PIDS (1 << 4)
-# define CU_CLOSE_PIPES (1 << 5)
-
-# define CU_ALL (CU_HDOCS | CU_SPECS | CU_STAGES | CU_PIPES \
-	| CU_PIDS | CU_CLOSE_PIPES)
-# define CU_BASIC (CU_HDOCS | CU_SPECS | CU_STAGES)
-# define CU_FULL_PIPES (CU_HDOCS | CU_SPECS \
-	| CU_STAGES | CU_PIPES | CU_CLOSE_PIPES)
-# define CU_SUCCESS (CU_HDOCS | CU_SPECS | CU_STAGES | CU_PIPES | CU_PIDS)
+# define CU_HDOCS           0x01
+# define CU_SPECS           0x02
+# define CU_STAGES          0x04
+# define CU_PIPES           0x08
+# define CU_PIDS            0x10
+# define CU_CLOSE_PIPES     0x20
+# define CU_ALL             0x3F
+# define CU_BASIC           0x07
+# define CU_FULL_PIPES      0x2F
+# define CU_SUCCESS         0x1F
 
 typedef struct s_hdoc_prep
 {
