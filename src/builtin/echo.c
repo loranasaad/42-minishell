@@ -6,13 +6,28 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 15:09:58 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/22 19:03:53 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 17:44:43 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	is_n_option(char *arg);
+static int	is_n_option(char *arg)
+{
+	int		i;
+
+	i = 0;
+	if (arg[i] != '-')
+		return (0);
+	i++;
+	while (arg[i])
+	{
+		if (arg[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 int	builtin_echo(char **argv)
 {
@@ -39,21 +54,4 @@ int	builtin_echo(char **argv)
 	if (newline)
 		printf("\n");
 	return (0);
-}
-
-static int	is_n_option(char *arg)
-{
-	int		i;
-
-	i = 0;
-	if (arg[i] != '-')
-		return (0);
-	i++;
-	while (arg[i])
-	{
-		if (arg[i] != 'n')
-			return (0);
-		i++;
-	}
-	return (1);
 }

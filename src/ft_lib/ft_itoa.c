@@ -3,18 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 14:35:19 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/22 15:50:30 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/11/04 15:53:30 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static unsigned int	ft_how_many_digits(int n);
-char				*ft_strdup(const char *s);
-int					ft_handle_neg(int *n);
+static unsigned int	ft_how_many_digits(int n)
+{
+	unsigned int	digits;
+
+	digits = 0;
+	if (n < 0)
+		n = -n;
+	while (1)
+	{
+		digits++;
+		n = n / 10;
+		if (n == 0)
+			break ;
+	}
+	return (digits);
+}
+
+int	ft_handle_neg(int *n)
+{
+	if (*n < 0)
+	{
+		*n = -*n;
+		return (1);
+	}
+	return (0);
+}
 
 char	*ft_itoa(int n)
 {
@@ -42,31 +65,4 @@ char	*ft_itoa(int n)
 	if (neg)
 		*strnum-- = '-';
 	return (++strnum);
-}
-
-static unsigned int	ft_how_many_digits(int n)
-{
-	unsigned int	digits;
-
-	digits = 0;
-	if (n < 0)
-		n = -n;
-	while (1)
-	{
-		digits++;
-		n = n / 10; 
-		if (n == 0)
-			break ;
-	}
-	return (digits);
-}
-
-int	ft_handle_neg(int *n)
-{
-	if (*n < 0)
-	{
-		*n = -*n;
-		return (1);
-	}
-	return (0);
 }

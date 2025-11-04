@@ -1,29 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   exec_child_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/15 18:01:42 by loasaad           #+#    #+#             */
-/*   Updated: 2025/11/04 15:45:43 by loasaad          ###   ########.fr       */
+/*   Created: 2025/11/03 15:49:35 by loasaad           #+#    #+#             */
+/*   Updated: 2025/11/04 14:59:34 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "exec.h"
 
-int	main(int argc, char **argv, char **envp)
+void	prep_cleanup(t_pipe_data *data, t_cu *cu, int i)
 {
-	t_ms	ms;
-
-	(void)argc;
-	(void)argv;
-	(void)envp;
-	ms.last_status = 0;
-	ms.interactive = isatty(STDIN_FILENO);
-	ms.exit_requested = 0;
-	ms.env = env_init(envp);
-	repl(&ms);
-	env_free(&(ms.env));
-	return (ms.last_status);
+	cu->spec = &data->specs[i];
+	cu->stages = data->stages;
+	cu->specs = data->specs;
+	cu->pipes = data->pipes;
+	cu->pids = data->pids;
+	cu->pipe_len = data->len;
 }

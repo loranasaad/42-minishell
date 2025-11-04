@@ -6,12 +6,11 @@
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 11:44:36 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/28 13:30:37 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 18:16:31 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "parser.h"
 
 static int	add_arg(int start, int end, char *val, t_cmdspec *out);
 
@@ -19,7 +18,7 @@ static int	add_arg(int start, int end, char *val, t_cmdspec *out);
 int	several_fields(int quoted, char	*val)
 {
 	if (quoted != 0)
-		return (0) ;
+		return (0);
 	if ((ft_strchr(val, ' ')
 			|| ft_strchr(val, '\t') || ft_strchr(val, '\n')))
 		return (1);

@@ -1,54 +1,56 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_list2.c                                        :+:      :+:    :+:   */
+/*   build_env_list.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/22 15:17:28 by latabagl          #+#    #+#             */
-/*   Updated: 2025/09/22 15:59:22 by latabagl         ###   ########.fr       */
+/*   Created: 2025/09/22 15:17:24 by latabagl          #+#    #+#             */
+/*   Updated: 2025/10/29 17:09:09 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// if key found, returns value, else NULL !!! CASE SENSITIVE
-char	*env_get(t_env *env, char *key)
+// build the list with env variables (key, value)
+t_env	*env_init(char **envp)
 {
-	t_env	*tmp;
+	t_env	*env;
 
-	if (!key)
-		return (NULL);
-	tmp = env;
-	while (tmp)
+	env = NULL;
+	if (!envp || !envp[0])
 	{
-		if (tmp->key && ft_strcmp(tmp->key, key) == 0)
-			return (tmp->value);
-		tmp = tmp->next;
+		build_min_env(&env);
+		return (env);
 	}
-	return (NULL);
+	fill_env(envp, &env);
+	handle_shlvl(&env);
+	return (env);
 }
 
-void	handle_shlvl(t_env	**env)
+// helper for env_init, here I have exit for malloc fail
+void	fill_env(char **envp, t_env	**env)
 {
-	char	*shell_lvl;
-	int		shell_lvl_nb;
+	int		i;
+	char	*key;
+	char	*value;
 
-	shell_lvl = env_get(*env, "SHLVL");
-	if (!shell_lvl)
+	i = 0;
+	while (envp[i])
 	{
-		env_set(env, "SHLVL", "1", 0);
-		return ;
+		key = get_key(envp[i]);
+		value = ft_strchr(envp[i], '=');
+		if (value)
+			value = ft_strdup(value + 1);
+		else
+			value = ft_strdup("");
+		if (add_env_var(env, key, value) == 1)
+		{
+			env_free(env);
+			exit (1);
+		}
+		i++;
 	}
-	shell_lvl_nb = ft_atoi(shell_lvl);
-	shell_lvl_nb++;
-	if (shell_lvl_nb > 1000 || shell_lvl_nb < 0)
-		shell_lvl_nb = 1;
-	shell_lvl = ft_itoa(shell_lvl_nb);
-	if (!shell_lvl)
-		return ;
-	env_set(env, "SHLVL", shell_lvl, 1);
-	free(shell_lvl);
 }
 
 // Key exists => overwrite or not the value. No key => add new node 
@@ -106,29 +108,4 @@ int	env_unset(t_env **env, char *key)
 		w = w->next;
 	}
 	return (1);
-}
-
-// list => array (to be passed to execve) 
-char	**env_to_envp(t_env *env)
-{
-	t_env	*w;
-	int		i;
-	char	**envp;
-
-	i = 0;
-	w = env;
-	while (w)
-	{
-		i++;
-		w = w->next;
-	}
-	envp = malloc((i + 1) * sizeof(char *));
-	if (!envp)
-		return (NULL);
-	if (build_envp(env, envp) == 1)
-	{
-		free_str_arr(&envp);
-		return (NULL);
-	}
-	return (envp);
 }

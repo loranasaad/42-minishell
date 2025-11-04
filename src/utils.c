@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 14:07:01 by loasaad           #+#    #+#             */
-/*   Updated: 2025/09/22 23:52:41 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/11/04 15:46:11 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 void	ms_perror(const char *prefix, const char *arg)
 {
-	const char *err;
+	const char	*err;
 	size_t		len;
 
 	if (prefix)

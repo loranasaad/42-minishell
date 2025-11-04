@@ -3,19 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   var_expansion.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
+/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 13:10:59 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/24 13:31:37 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/29 18:16:44 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "parser.h"
 
-static char	*join_res_seg(char *result, char *segment);
+static char	*join_res_seg(char *result, char *segment)
+{
+	char	*tmp;
 
-// return malloced str of input with var expansion; status is 0 if malloc failed or { not closed
+	tmp = result;
+	result = ft_strjoin(result, segment);
+	free(tmp);
+	free(segment);
+	return (result);
+}
+
+/* return malloced str of input with var expansion
+   status is 0 if malloc failed or { not closed */
 char	*handle_var_expansion(char *str, int quoted, t_ms *ms, int *status)
 {
 	char	*result;
@@ -33,7 +42,7 @@ char	*handle_var_expansion(char *str, int quoted, t_ms *ms, int *status)
 	}
 	if (quoted == 0 || quoted == 2)
 		result = expand_dollar_sign(tilde_expanded, ms);
-	else	//quited == 1
+	else
 		result = ft_strdup(tilde_expanded);
 	free(tilde_expanded);
 	if (!result)
@@ -69,16 +78,5 @@ char	*expand_dollar_sign(char *str, t_ms *ms)
 		}
 		result = join_res_seg(result, segment);
 	}
-	return (result);
-}
-
-static char	*join_res_seg(char *result, char *segment)
-{
-	char	*tmp;
-
-	tmp = result;
-	result = ft_strjoin(result, segment);
-	free(tmp);
-	free(segment);
 	return (result);
 }

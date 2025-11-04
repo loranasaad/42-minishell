@@ -1,40 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   export_helper.c                                    :+:      :+:    :+:   */
+/*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 22:03:27 by latabagl          #+#    #+#             */
-/*   Updated: 2025/10/22 22:51:40 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/10/29 17:05:44 by latabagl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static int	add_env_var_export(t_env **env, char *key, char *value, int has_v);
-static int	ft_isalpha(char c);
-static int	ft_isdigit(char c);
-
-// First char: letter or _, Remaining chars: letters, digits, or _
-int	is_key_valid(char *key)
-{
-	int	i;
-
-	i = 0;
-	if (!key[i])
-		return (0);
-	if (key[i] != '_' && !ft_isalpha(key[i]))
-		return (0);
-	i++;
-	while (key[i])
-	{
-		if (key[i] != '_' && !ft_isalpha(key[i]) && !ft_isdigit(key[i]))
-			return (0);
-		i++;
-	}
-	return (1);
-}
 
 static int	ft_isalpha(char c)
 {
@@ -45,6 +21,30 @@ static int	ft_isalpha(char c)
 static int	ft_isdigit(char c)
 {
 	return (c >= '0' && c <= '9');
+}
+
+static int	add_env_var_export(t_env **env, char *key, char *value, int has_v)
+{
+	t_env	*var;
+	t_env	*tmp;
+
+	var = malloc(sizeof(t_env));
+	if (!var)
+		return (free(key), free(value), 1);
+	var->key = key;
+	var->value = value;
+	var->has_value = has_v;
+	var->next = NULL;
+	if (!*env)
+		*env = var;
+	else
+	{
+		tmp = *env;
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = var;
+	}
+	return (0);
 }
 
 int	env_set_export(t_env **env, char *key, char *value, int has_value)
@@ -74,26 +74,22 @@ int	env_set_export(t_env **env, char *key, char *value, int has_value)
 	return (add_env_var_export(env, key, value, has_value));
 }
 
-static int	add_env_var_export(t_env **env, char *key, char *value, int has_v)
+// First char: letter or _, Remaining chars: letters, digits, or _
+int	is_key_valid(char *key)
 {
-	t_env	*var;
-	t_env	*tmp;
+	int	i;
 
-	var = malloc(sizeof(t_env));
-	if (!var)
-		return (free(key), free(value), 1);
-	var->key = key;
-	var->value = value;
-	var->has_value = has_v;
-	var->next = NULL;
-	if (!*env)
-		*env = var;
-	else
+	i = 0;
+	if (!key[i])
+		return (0);
+	if (key[i] != '_' && !ft_isalpha(key[i]))
+		return (0);
+	i++;
+	while (key[i])
 	{
-		tmp = *env;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = var;
+		if (key[i] != '_' && !ft_isalpha(key[i]) && !ft_isdigit(key[i]))
+			return (0);
+		i++;
 	}
-	return (0);
+	return (1);
 }
