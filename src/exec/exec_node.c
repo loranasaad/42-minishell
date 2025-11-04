@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 13:09:05 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/26 16:16:42 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/10/29 16:51:55 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	exec_run_node(t_ast *node, t_ms *ms, t_cu *cleanup)
 {
 	t_cmdspec	spec;
 	int			rc;
-	
+
 	if (!node)
 		return (0);
 	if (node->kind == AST_CMD)

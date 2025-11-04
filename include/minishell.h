@@ -57,12 +57,24 @@ typedef	struct s_cu		//leak cleanup
 	int			pipe_len;
 }				t_cu;
 
+typedef	struct s_seen
+{
+	int	single_quote;
+	int	double_quote;
+}		t_seen;
+
+
 #define IFS " \t\n"
 
 extern	int	g_signal;
 
 void	repl(t_ms *ms);
+void	init_cleanup(t_cu *cleanup, t_ast *ast, t_token *toks);
 
+//lex
+void	set_quote_type(int seg, t_seen *seen, int *quoted);
+
+//new (up)
 void	init_prompt_signals(void);
 void	sigint_exec_handler(int sig);
 void	init_exec_signals(void);
@@ -72,11 +84,9 @@ void	sigquit_exec_handler(int sig);
 //void	termios_restore(void);
 
 t_token	*lex_line(const char *line, int *lex_status);
-
 int		match_2(const char *s, int i, char a, char b);
 int		is_meta(char c);
 int		is_space(char c);
-int		word_len(char *str, int *i);
 
 t_token	*tok_new(t_tok kind, char *val, int quoted);
 void	tok_push_back(t_token **head, t_token *node);

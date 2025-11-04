@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   signals_exec.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/17 12:45:27 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/28 11:37:42 by loasaad          ###   ########.fr       */
+/*   Created: 2025/11/04 11:39:51 by loasaad           #+#    #+#             */
+/*   Updated: 2025/11/04 15:44:46 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,6 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-int	g_signal = 0;
-
-//for child during exec
 void	sigquit_exec_handler(int sig)
 {
 	(void)sig;
@@ -32,50 +29,15 @@ void	sigint_exec_handler(int sig)
 
 void	init_exec_signals(void)
 {
-	struct	sigaction	sa_int;
-	struct	sigaction	sa_quit;
-	
+	struct sigaction	sa_int;
+	struct sigaction	sa_quit;
+
 	sigemptyset(&sa_int.sa_mask);
 	sigemptyset(&sa_quit.sa_mask);
 	sa_int.sa_handler = sigint_exec_handler;
 	sa_quit.sa_handler = sigquit_exec_handler;
 	sa_int.sa_flags = 0;
 	sa_quit.sa_flags = 0;
-	sigaction(SIGINT, &sa_int, NULL);
-	sigaction(SIGQUIT, &sa_quit, NULL);	
-}
-
-
-void	sigint_handler(int sig)
-{
-	(void)sig;
-	g_signal = SIGINT;
-	write(STDOUT_FILENO, "\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
-	// extern	int	rl_done;
-	// rl_done = 1;
-}
-
-void	sigquit_handler(int sig)
-{
-	(void)sig;
-	// printf("debug: quit detected/n");
-	g_signal = SIGQUIT;
-	// rl_on_new_line();
-	// rl_redisplay();
-}
-void	init_prompt_signals(void)
-{
-	struct	sigaction	sa_int;
-	struct	sigaction	sa_quit;
-	sigemptyset(&sa_int.sa_mask);
-	sigemptyset(&sa_quit.sa_mask);
-	sa_int.sa_handler = sigint_handler;
-	sa_quit.sa_handler = sigquit_handler;
-	sa_int.sa_flags = 0;				//Loran : to try for leaks
-	sa_quit.sa_flags = SA_RESTART;
 	sigaction(SIGINT, &sa_int, NULL);
 	sigaction(SIGQUIT, &sa_quit, NULL);
 }

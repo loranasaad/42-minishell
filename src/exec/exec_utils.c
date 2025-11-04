@@ -6,24 +6,24 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 13:48:14 by loasaad           #+#    #+#             */
-/*   Updated: 2025/10/26 18:59:29 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/11/04 15:15:37 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <string.h>
 #include <sys/wait.h>
 #include "exec.h"
+
 void	child_cleanup_all(t_ms *ms, t_cu *cleanup)
 {
 	int	i;
-	
+
 	if (cleanup->spec)
 		free_cmdspec(cleanup->spec);
 	if (cleanup->ast)
 		ast_free(cleanup->ast);
 	if (cleanup->toks)
 		free_tokens(cleanup->toks);
-
 	if (cleanup->specs && cleanup->pipe_len > 0)
 	{
 		i = 0;
@@ -40,7 +40,6 @@ void	child_cleanup_all(t_ms *ms, t_cu *cleanup)
 		free(cleanup->pipes);
 	if (cleanup->pids)
 		free(cleanup->pids);
-	
 	env_free(&(ms->env));
 }
 
@@ -79,14 +78,14 @@ int	is_stateful(const char *name)
 		return (1);
 	return (0);
 }
-void exec_error(const char *cmd)
+
+void	exec_error(const char *cmd)
 {
-	const	char	*s1;
-	const	char	*s2;
+	const char	*s1;
+	const char	*s2;
 
 	s1 = "minishell: ";
 	s2 = ": command not found\n";
-
 	write(2, s1, ft_strlen(s1));
 	write(2, cmd, ft_strlen(cmd));
 	write(2, s2, ft_strlen(s2));
