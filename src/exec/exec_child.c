@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:26:43 by loasaad           #+#    #+#             */
-/*   Updated: 2025/11/04 15:08:29 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/11/06 16:19:33 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ static	void	setup_child_signals(void)
 	signal(SIGQUIT, SIG_DFL);
 }
 
+// Handle redirs and empty command with redirs
 static	void	setup_child_redir(t_cmdspec *spec, t_ms *ms, t_cu *cleanup)
 {
 	if (!apply_redirs(spec->redirs))

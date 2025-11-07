@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: latabagl <latabagl@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 17:50:14 by latabagl          #+#    #+#             */
-/*   Updated: 2025/11/04 17:12:40 by latabagl         ###   ########.fr       */
+/*   Updated: 2025/11/07 12:32:12 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ typedef struct s_ms
 {
 	t_env	*env;
 	int		last_status;
-	int		interactive;
 	int		exit_requested;
 }			t_ms;
 
@@ -114,7 +113,7 @@ void	build_min_env(t_env **env);
 void	free_str_arr(char ***words);
 // cmdspec
 char	*find_in_path(char const *name, t_env *env);
-int		build_cmdspec_from_segment(t_token *start, t_token *end, 
+int		build_cmdspec_from_segment(t_token *start, t_token *end,
 			t_cmdspec *out, t_ms *ms);
 int		handle_redir(t_cmdspec *out, t_token *tok, t_ms *ms);
 void	free_cmdspec(t_cmdspec *spec);

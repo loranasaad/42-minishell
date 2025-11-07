@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 18:01:42 by loasaad           #+#    #+#             */
-/*   Updated: 2025/11/04 15:45:43 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/11/05 11:42:33 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	(void)envp;
 	ms.last_status = 0;
-	ms.interactive = isatty(STDIN_FILENO);
 	ms.exit_requested = 0;
 	ms.env = env_init(envp);
 	repl(&ms);

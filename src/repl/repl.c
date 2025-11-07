@@ -6,7 +6,7 @@
 /*   By: loasaad <loasaad@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 16:20:57 by loasaad           #+#    #+#             */
-/*   Updated: 2025/11/04 16:29:15 by loasaad          ###   ########.fr       */
+/*   Updated: 2025/11/05 17:14:18 by loasaad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,13 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-static	int	sigint_repl_handler(char *line, t_ms *ms)
+static	void	sigint_repl_handler(t_ms *ms)
 {
 	if (g_signal == SIGINT)
 	{
 		ms->last_status = 130;
 		g_signal = 0;
-		if (line)
-			free(line);
-		return (1);
 	}
-	return (0);
 }
 
 static t_token	*lex_input(char *line, int *lex_status, t_ms *ms)
@@ -64,8 +60,7 @@ static	int	process_line(char *line, t_ms *ms)
 	int			parse_status;
 	t_cu		cleanup;
 
-	if (sigint_repl_handler(line, ms))
-		return (0);
+	sigint_repl_handler(ms);
 	if (line[0] == '\0')
 	{
 		free(line);
