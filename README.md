@@ -60,14 +60,3 @@ echo $?
 loasaad
 latabagl
 ```
-
-## Resources
-
-- [GNU Bash manual](https://www.gnu.org/software/bash/manual/)
-- [Unix system calls — fork, execve, pipe](https://man7.org/linux/man-pages/man2/fork.2.html)
-- [Readline library documentation](https://tiswww.case.edu/php/chet/readline/rltop.html)
-- [Write a shell in C — Stephen Brennan](https://brennan.io/2015/01/16/write-a-shell-in-c/)
-
-**AI usage:** AI was used to clarify edge cases in signal handling behavior and to 
-cross-check quote parsing logic against bash reference behavior. All code was written, 
-reviewed, and understood by the authors.
